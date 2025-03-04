@@ -16,42 +16,28 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 
-app.post('/refresh-token', async (req, res) => {
-    try {
-        const authHeader = req.cookies.authorization;
-        const refreshToken = authHeader && authHeader.split(" ")[1];  //called short-circuit evaluation
-        if (!refreshToken) return res.status(403).send("refresh token expired");
-
-        const data = AuthService.verifyRefreshToken(refreshToken);
-        const newAccessToken = AuthService.generateTokens("", data.username);    //empty parameter to only regenerate access token
-        return res.status(200).json({ newAccessToken });
-    } catch (error) {
-        return res.status(403).send(`error:${error.name}`);
-    }
-})
-
 app.post('/signup', validateRequest, async (req, res) => {
     try {
         const { username, password } = req.body;
-        const isUser = await userPool.query(queries.searchUserByUsername, [username]);
+        const isUser = await userPool.query(config.searchUserByUsername, [username]);
         if (isUser.rows.length > 0) return res.status(400).send("username alredy exists");
 
-        const hashedPassword = await AuthService.generateHashedPass(password);
+        const hashedPassword = AuthService.generateHashedPass(password);
         await userPool.query(queries.createUser, [username, hashedPassword]);
         return res.status(200).send("successfully signed up")
     } catch (error) {
-        return res.status(500).send("internal server error");
+        return req.status(500).send("internal server error");
     }
+
 });
 app.post('/login', validateRequest, async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const isUser = await userPool.query(queries.searchUserByUsername, [username]);
+        const { username } = req.body;
+        const isUser = await userPool.query(queries.queries.searchUserByUsername, [username]);
         if (isUser.rows.length == 0) return res.status(400).send("user dosen't exist");
 
-        if (await AuthService.checkPass(password, isUser.rows[0].password)) {
-            console.log("inside if")
-            const { accessToken, refreshToken } = AuthService.generateTokens("all", username);
+        if (AuthService.checkPass(isUser.rows[0].password)) {
+            const { accessToken, refreshToken } = AuthService.generateTokens(username);
             return res.cookie("refreshToken", refreshToken, config.cookie).json({ accessToken });
         } else {
             return res.status(400).send("invalid credentials");
@@ -60,6 +46,8 @@ app.post('/login', validateRequest, async (req, res) => {
         return res.status(500).send("internal server error");
     }
 })
-app.listen(4000, () => {
-    console.log("listening to port 4000");
+
+
+app.listen(3000, () => {
+    console.log("listening to port 3000")
 })

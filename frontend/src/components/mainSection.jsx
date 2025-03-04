@@ -1,18 +1,18 @@
-import React from 'react'
-import Message from './message.jsx';
+import React from "react";
+import Message from "./Message.jsx";
+import Blog from "./Blog.jsx";
 
-const mainSection = () => {
+const MainSection = () => {
   return (
-    <div className='w-[70vw] h-full px-2 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden '
-    style={{gridArea:"leftside"}}>
-        <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
+    <div className="md:w-[70vw] w-screen h-full md:px-2 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ">
+      <Message />
+      <Blog />
+      <Message />
+      <Message />
+      <Message />
+      <Message />
     </div>
-  )
-}
+  );
+};
 
-export default mainSection
+export default MainSection;

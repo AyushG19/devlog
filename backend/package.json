@@ -1,10 +1,8 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "devStart": "nodemon ./servers/server.js",
-    "devStart2": "nodemon ./servers/authServer.js"
+    "devStart": "nodemon ./userManagmentServer/authServer.js"
   },
   "keywords": [],
   "author": "",

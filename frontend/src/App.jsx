@@ -1,20 +1,20 @@
-import Navbar from './components/Navbar.jsx';
-import MainSection from './components/mainSection.jsx';
-import RightSection from './components/rightSection.jsx';
+import Navbar from "./components/Navbar.jsx";
+import RightSection from "./components/RightSection.jsx";
+import Layout from "./components/Layout.jsx";
+import ProfilePage from "./components/ProfilePage.jsx";
+import ActionPage from "./components/ActionPage.jsx";
+import { Routes, Route } from "react-router";
 
-import './App.css'
+import "./App.css";
 
 function App() {
-
   return (
-    <div className='relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-2'
-    style={{gridTemplateAreas: "'navbar navbar' 'leftside rightside'"
-    }}>
-      <Navbar/>
-      <MainSection/>
-      <RightSection/>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<ActionPage />}></Route>
+      <Route path="/devlog" element={<Layout />}></Route>
+      <Route path="/profile" element={<ProfilePage />}></Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;

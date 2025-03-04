@@ -6,8 +6,9 @@ const schema = joi.object({
 });
 
 function validateRequest(req, res, next) {
-    const { err } = schema.validate(req.body);  //returns object {err,result}
-    if (err) return req.status(400).json({ error: err.details[0] });
+    const { error } = schema.validate(req.body);  //returns object {err,result}
+    console.log("validating req")
+    if (error) return res.status(400).json({ error: error.details[0] });
     next();
 };
 
