@@ -12,7 +12,7 @@ const Layout = () => {
 
   return (
     <div
-      className="relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-2"
+      className="relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] "
       style={{ gridTemplateAreas: "'navbar navbar' 'leftside rightside'" }}
     >
       <Navbar />

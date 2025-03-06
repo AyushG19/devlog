@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Heart, BookMarked, MessagesSquare } from "lucide-react";
 import api from "../api/api";
 
-const Message = () => {
+const Message = ({ post }) => {
+  const [isImg, setIsImg] = useState("");
+
   // const fetchMessage = async () => {
   //   try {
   //     const res = await api.get("http://localhost:4000/get-user-message");
@@ -10,7 +12,7 @@ const Message = () => {
   //     console.log(error);
   //   }
   // };
-  const [isImg, setIsImg] = useState("");
+  // console.log(post.user_id);
   return (
     <div className="flex flex-col bg-[var(--secondary)] border-b py-3 px-4 ">
       {/* Container for the user info */}
@@ -19,22 +21,14 @@ const Message = () => {
           <div className=" bg-black rounded-full size-10  mr-3"></div>
           <div>
             <p className="font-semibold text-lg">lucky guy</p>
-            <p className="text-sm -mt-1 opacity-60 italic ">@username</p>
+            <p className="text-sm -mt-1 opacity-60 italic ">{post.username}</p>
           </div>
         </div>
         <div className="text-[var(--primary)]">Says</div>
       </div>
       {/* Container for the user text */}
       <div className="pl-5 mb-2">
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque vero
-          iusto explicabo vel pariatur quaerat enim quis sapiente doloribus
-          corporis eius perspiciatis voluptates, placeat soluta accusamus?
-          Adipisci sunt at culpa.lorem Lorem ipsum, dolor sit amet consectetur
-          adipisicing elit. Velit, laboriosam fuga natus esse doloremque
-          reiciendis quidem impedit quo numquam saepe repellendus a aut minima
-          molestiae ea consectetur officiis delectus culpa.
-        </p>
+        <p>{post.content}</p>
         {isImg && <img src={isImg} alt="image" />}
       </div>
       {/* Container for interactions */}

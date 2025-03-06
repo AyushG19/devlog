@@ -52,7 +52,12 @@ const Navbar = () => {
         </button>
       </div>
 
-      <div className="cursor-pointer rounded-full size-8 bg-black">p</div>
+      <div
+        className="cursor-pointer rounded-full size-8 bg-black"
+        onClick={() => (window.location.href = "/profile")}
+      >
+        p
+      </div>
     </div>
   );
 };

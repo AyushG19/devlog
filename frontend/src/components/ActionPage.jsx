@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router";
+import { UserContext } from "../context/userContext";
 
 export default function ActionPage() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ export default function ActionPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+  const { setUserInfo } = useContext(UserContext);
 
   const toggleMode = () => {
     setIsLogin((prev) => !prev);
@@ -31,9 +33,11 @@ export default function ActionPage() {
       }
 
       const data = await res.json();
-      console.log("data for login: ",data)
+      console.log("data for login: ", data);
+      setUserInfo(data);
       localStorage.setItem("accessToken", data.accessToken);
-      navigate("/devlog");
+
+      // navigate("/devlog");
     } catch (error) {
       console.log(error.message);
     }

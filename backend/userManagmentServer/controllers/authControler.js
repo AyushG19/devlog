@@ -19,7 +19,7 @@ const refreshExpiredToken = async (req, res) => {
         console.log("new access token is :", newAccessToken)
         return res.status(200).json({ newAccessToken });
     } catch (error) {
-        return res.status(700).json({error});
+        return res.status(700).json({ error });
     }
 }
 
@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
             const userId = isUser.rows[0].user_id;
             const { accessToken, refreshToken } = AuthService.generateTokens("all", { username, userId });
             console.log("accesstoken", accessToken)
-            return res.cookie("refreshToken", refreshToken, config.cookie).json({ accessToken });
+            return res.cookie("refreshToken", refreshToken, config.cookie).json({ userData: isUser.rows[0], accessToken });
         } else {
             return res.status(400).json({ message: "invalid credentials" });
         }

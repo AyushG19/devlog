@@ -21,7 +21,7 @@ class AuthService {
             return { accessToken, refreshToken };
         }
         console.log("new: ", payLoad)
-        const accessToken = jwt.sign({ userId: payLoad.userId }, config.jwt.accessTokenSecret, { expiresIn: config.jwt.accessTokenExpiry });
+        const accessToken = jwt.sign({ username: payLoad.username, userId: payLoad.userId }, config.jwt.accessTokenSecret, { expiresIn: config.jwt.accessTokenExpiry });
         console.log("new cretd acccss")
         return (accessToken);
     }

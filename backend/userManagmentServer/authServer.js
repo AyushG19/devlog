@@ -15,8 +15,8 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
-app.use("/api/auth",authRoutes);
-app.use("/api/user",userDataRouter)
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userDataRouter)
 
 app.listen(4000, () => {
     console.log("listening to port 4000");
