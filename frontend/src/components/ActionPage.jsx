@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../context/userContext";
+import api from "../api/api";
 
 export default function ActionPage() {
   const [username, setUsername] = useState("");
@@ -11,7 +12,7 @@ export default function ActionPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-  const { setUserInfo } = useContext(UserContext);
+  // const { userInfo, setUserInfo } = useContext(UserContext);
 
   const toggleMode = () => {
     setIsLogin((prev) => !prev);
@@ -20,26 +21,18 @@ export default function ActionPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-      });
+      const res = await api.post("/api/auth/login", { username, password });
 
-      if (res.status === 401 || res.status === 403) {
-        setMessage("Username or password incorrect");
-        return;
-      }
+      console.log("data for login: ", res);
+      // setUserInfo(res.data.userData);
+      localStorage.setItem("accessToken", res.data.accessToken);
 
-      const data = await res.json();
-      console.log("data for login: ", data);
-      setUserInfo(data);
-      localStorage.setItem("accessToken", data.accessToken);
-
-      // navigate("/devlog");
+      navigate("/devlog");
     } catch (error) {
-      console.log(error.message);
+      if (error.status === 400 || error.status === 403) {
+        setMessage("Username or password incorrect");
+      }
+      console.log(error);
     }
   };
 
@@ -56,15 +49,19 @@ export default function ActionPage() {
         body: JSON.stringify({ username, password }),
       });
 
-      if (res.status === 403 || res.status === 401) {
+      console.log(res.status);
+      if (res.status === 400 || res.status === 401) {
         setMessage("Username unavailable");
         return;
       }
       setIsLogin(true);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   };
+  // useEffect(() => {
+  //   console.log(userInfo);
+  // }, [userInfo]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">

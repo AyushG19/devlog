@@ -5,7 +5,7 @@ const { config } = require("../config/config")
 const refreshExpiredToken = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;  //called short-circuit evaluation
-        if (!refreshToken) return res.status(803).send("refresh token expired");
+        if (!refreshToken) return res.status(403).send("refresh token expired");
 
         console.log("check 1 in auth controller")
         const data = AuthService.verifyRefreshToken(refreshToken);
@@ -27,11 +27,18 @@ const createUser = async (req, res) => {
     try {
         const { username, password } = req.body;
         const isUser = await user.findUserdataByUsername(username);
-        if (isUser.rows.length > 0) return res.status(400).json({ message: "username alredy exists" });
+        console.log(isUser.rows.length)
+        if (isUser.rows.length > 0) {
+            console.log("should return 400 ")
+            return res.status(400).json({ message: "username alredy exists" });
+        }
+        console.log("should return 400 ")
 
         const hashedPassword = await AuthService.generateHashedPass(password);
-        const userData = await user.createUser(username, hashedPassword);
-        return res.status(200).json({ message: "successfully signed up", userData })
+        console.log("passed pass")
+        const result = await user.createUser(username, hashedPassword);
+        console.log("signup result; ", result)
+        return res.status(200).json({ message: "successfully signed up" })
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -49,9 +56,11 @@ const loginUser = async (req, res) => {
         if (await AuthService.checkPass(password, isUser.rows[0].password)) {
             console.log("inside if")
             const userId = isUser.rows[0].user_id;
+            const profileInfo = await user.findProfileInfoByUserId(userId)
             const { accessToken, refreshToken } = AuthService.generateTokens("all", { username, userId });
             console.log("accesstoken", accessToken)
-            return res.cookie("refreshToken", refreshToken, config.cookie).json({ userData: isUser.rows[0], accessToken });
+
+            return res.cookie("refreshToken", refreshToken, config.cookie).json({ userData: profileInfo.rows[0], accessToken });
         } else {
             return res.status(400).json({ message: "invalid credentials" });
         }

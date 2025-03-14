@@ -6,12 +6,11 @@ const config = {
         refreshTokenSecret: process.env.SECRET_REFRESH_TOKEN,
         accessTokenSecret: process.env.SECRET_ACCESS_TOKEN,
         refreshTokenExpiry: "300s",
-        accessTokenExpiry: "60s"
+        accessTokenExpiry: "10s"
     },
     cookie: {
         maxAge: 300 * 1000,
         httpOnly: false,
-        secure: true,
         sameSite: "lax",
     },
 }

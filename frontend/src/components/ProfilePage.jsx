@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ProfileUserInfo from "./ProfileUserInfo.jsx";
 import ProfileUserPost from "./ProfileUserPost.jsx";
+import api from "../api/api.js";
 
 const ProfilePage = () => {
   const ref = useRef(null);
@@ -8,10 +9,10 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState({});
 
   const fetchUserInfo = async () => {
-    const res = await api.get("http://localhost:4000/api/user/profile");
+    const res = await api.get("/api/user/profile");
     console.log("data: ", res);
 
-    setUserData(res.userData.rows[0]);
+    setUserData(res.data.userData[0]);
   };
 
   useEffect(() => {

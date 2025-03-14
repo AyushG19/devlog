@@ -1,60 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import Message from "./Message";
 import DummyMessage from "./DummyMessage";
 import api from "../api/api";
 import "../App.css";
 import { ChevronLeft } from "lucide-react";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 const ProfileUserPost = (props) => {
-  const [Posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [lastId, setLastId] = useState("");
+  const observerTaget = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 100 &&
-        !loading
-      ) {
-        fetchPosts();
-      }
-    };
-    console.log("posts: ", Posts);
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [loading]);
-
-  const fetchPosts = async () => {
-    if (loading) return;
+  const fetchPosts = async ({ pageParam = 1 }) => {
     try {
-      setLoading(true);
-      const res = await api.get(
-        `http://localhost:4000/api/user/get-posts?last-id=${lastId}`
-      );
+      const res = await api.get(`/api/user/get-posts?page=${pageParam}`);
       console.log("res: ", res);
-      const data = res.userPosts.rows;
-      console.log(...data);
-      setPosts((prevPosts) => [...prevPosts, ...data]);
+      return { data: res.data, nextPage: pageParam + 1 };
+      // const data = res.userPosts.rows;
+      // console.log(...data);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
+      throw error;
     }
   };
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ["get-post"],
+      queryFn: fetchPosts,
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => {
+        if (lastPage?.data?.userPosts?.length === 0) return undefined;
+        return lastPage.nextPage;
+      },
+    });
+
+  const posts = data?.pages.flatMap((page) => page.data.userPosts) || [];
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        console.log("fetching next page.", hasNextPage);
+        fetchNextPage();
+      }
+      {
+        threshold: 0.1;
+      }
+    });
+    if (observerTaget.current) {
+      observer.observe(observerTaget.current);
+    }
+    return () => {
+      if (observerTaget.current) {
+        observer.unobserve(observerTaget.current);
+      }
+    };
+  }, [isFetchingNextPage, fetchNextPage, hasNextPage]); // Added missing dependencies
+  console.log("posts: ", data);
 
   return (
     <>
-      {Posts.length !== 0 ? (
+      {posts.length !== 0 ? (
         <div>
           <div
             className={`fixed left-0 right-0 top-0 h-14 flex items-center px-4 bg-[var(--primary)] ${
@@ -67,9 +74,12 @@ const ProfileUserPost = (props) => {
               }}
             />
           </div>
-          {Posts.map((post, index) => {
-            return <Message key={index} post={post} />;
+          {posts.map((post) => {
+            return <Message key={post.tweet_id} post={post} />;
           })}
+          <div ref={observerTaget} className="h-3">
+            {isFetchingNextPage ? "loading..." : ""}
+          </div>
         </div>
       ) : (
         <div className=" flex justify-center w-full">
