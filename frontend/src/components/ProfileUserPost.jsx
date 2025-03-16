@@ -56,7 +56,7 @@ const ProfileUserPost = (props) => {
         observer.unobserve(observerTaget.current);
       }
     };
-  }, [isFetchingNextPage, fetchNextPage, hasNextPage]); // Added missing dependencies
+  }, [isFetchingNextPage, fetchNextPage, hasNextPage]);
   console.log("posts: ", data);
 
   return (

@@ -5,8 +5,8 @@ const config = {
     jwt: {
         refreshTokenSecret: process.env.SECRET_REFRESH_TOKEN,
         accessTokenSecret: process.env.SECRET_ACCESS_TOKEN,
-        refreshTokenExpiry: "300s",
-        accessTokenExpiry: "10s"
+        refreshTokenExpiry: "600s",
+        accessTokenExpiry: "300s"
     },
     cookie: {
         maxAge: 300 * 1000,

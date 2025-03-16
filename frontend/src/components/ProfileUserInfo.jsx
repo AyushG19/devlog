@@ -1,12 +1,13 @@
 import { ChevronLeft } from "lucide-react";
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../api/api";
+import { UserContext } from "../context/userContext";
 
 const ProfileUserInfo = forwardRef((props, ref) => {
   const navigate = useNavigate();
+  const { userInfo } = useContext(UserContext);
 
-  const userData = props.userData;
   console.log(ref);
   return (
     <div ref={ref} className="relative border-b">
@@ -34,8 +35,8 @@ const ProfileUserInfo = forwardRef((props, ref) => {
             </button>
           </div>
           <div className=" mb-4">
-            <h1 className="text-4xl font-black">{`${userData.username}`}</h1>
-            <p>{`@${userData.username}`}</p>
+            <h1 className="text-4xl font-black">{`${userInfo.username}`}</h1>
+            <p>{`@${userInfo.username}`}</p>
           </div>
           <div className="flex gap-4">
             <p className="font-semibold text-xl">

@@ -1,23 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ProfileUserInfo from "./ProfileUserInfo.jsx";
 import ProfileUserPost from "./ProfileUserPost.jsx";
 import api from "../api/api.js";
+import { UserContext } from "../context/userContext.jsx";
 
 const ProfilePage = () => {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [userData, setUserData] = useState({});
 
-  const fetchUserInfo = async () => {
-    const res = await api.get("/api/user/profile");
-    console.log("data: ", res);
+  // const fetchUserInfo = async () => {
+  //   const res = await api.get("/api/user/profile");
+  //   console.log("data: ", res);
 
-    setUserData(res.data.userData[0]);
-  };
+  //   setUserData(res.data.userData[0]);
+  // };
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserInfo();
+  // }, []);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -38,8 +39,8 @@ const ProfilePage = () => {
   }, []);
   console.log("ref: ", ref.current);
   return (
-    <div className="flex flex-col w-screen h-screen overflow-y-auto">
-      <ProfileUserInfo userData={userData} ref={ref} />
+    <div className=" flex flex-col w-screen h-screen overflow-y-auto">
+      <ProfileUserInfo ref={ref} />
       <ProfileUserPost visibility={isVisible} />
     </div>
   );

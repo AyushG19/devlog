@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const Navbar = () => {
   const pages = ["Home", "Feed", "Popular", "Saved"];
+  const nav = useNavigate();
 
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -54,7 +55,9 @@ const Navbar = () => {
 
       <div
         className="cursor-pointer rounded-full size-8 bg-black"
-        onClick={() => (window.location.href = "/profile")}
+        onClick={() => {
+          nav("/profile");
+        }}
       >
         p
       </div>

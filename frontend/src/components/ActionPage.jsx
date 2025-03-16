@@ -12,7 +12,7 @@ export default function ActionPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-  // const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo, setUserInfo } = useContext(UserContext);
 
   const toggleMode = () => {
     setIsLogin((prev) => !prev);
@@ -26,7 +26,7 @@ export default function ActionPage() {
       console.log("data for login: ", res);
       // setUserInfo(res.data.userData);
       localStorage.setItem("accessToken", res.data.accessToken);
-
+      setUserInfo(res.data.userData);
       navigate("/devlog");
     } catch (error) {
       if (error.status === 400 || error.status === 403) {

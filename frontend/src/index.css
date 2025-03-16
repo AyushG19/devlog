@@ -1,11 +1,13 @@
-:root{
-  --primary:#FFD700;
-  --primary-light: #FFE971;
-  --secondary: #F5F5F5;
+@import "tailwindcss";
+
+:root {
+  --primary: #ffd700;
+  --primary-light: #ffe971;
+  --secondary: #f5f5f5;
 }
-*{
+* {
   font-family: roboto;
 }
-body{
+body {
   background-color: var(--secondary);
 }

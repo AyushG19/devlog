@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import api from "../api/api";
+import { UserContext } from "../context/userContext";
 
 const TweetModal = (props) => {
   const [content, setContent] = useState("");
+  const { userInfo } = useContext(UserContext);
 
   const handleSendTweet = async () => {
     console.log(content);
     try {
       const res = await api.post("http://localhost:4000/api/user/post", {
         content,
+        name: userInfo.name,
       });
       console.log(res);
     } catch (error) {
