@@ -18,7 +18,7 @@ const FeedSection = () => {
   const fetchPosts = async ({ pageParam = 1 }) => {
     try {
       const res = await api.get(`/api/user/get-feed?page=${pageParam}`);
-      console.log("res: ", res);
+      // console.log("res: ", res);
       return { data: res.data };
       // const data = res.userPosts.rows;
       // console.log(...data);
@@ -37,7 +37,7 @@ const FeedSection = () => {
     queryFn: fetchPosts,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      console.log("page length ; ", lastPage);
+      // console.log("page length ; ", lastPage);
       if (lastPage?.data?.userPosts?.length === 0) return undefined;
       return lastPage.data.nextPage;
     },
@@ -47,7 +47,7 @@ const FeedSection = () => {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-        console.log("fetching next page.", hasNextPage);
+        // console.log("fetching next page.", hasNextPage);
         fetchNextPage();
       }
       {
@@ -57,7 +57,7 @@ const FeedSection = () => {
     if (observerTaget.current) {
       observer.observe(observerTaget.current);
     }
-    console.log(isFetchingNextPage, fetchNextPage, hasNextPage);
+    // console.log(isFetchingNextPage, fetchNextPage, hasNextPage);
 
     return () => {
       if (observerTaget.current) {

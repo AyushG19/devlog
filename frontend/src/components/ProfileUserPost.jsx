@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Message from "./Message";
 import DummyMessage from "./DummyMessage";
 import api from "../api/api";
@@ -14,9 +14,12 @@ import {
 const ProfileUserPost = (props) => {
   const observerTaget = useRef(null);
   const navigate = useNavigate();
+  const { username } = useParams();
   const fetchPosts = async ({ pageParam = 1 }) => {
     try {
-      const res = await api.get(`/api/user/get-posts?page=${pageParam}`);
+      const res = await api.get(
+        `/api/user/get-posts?page=${pageParam}&username=${username}`
+      );
       console.log("res: ", res);
       return { data: res.data, nextPage: pageParam + 1 };
       // const data = res.userPosts.rows;
@@ -75,7 +78,7 @@ const ProfileUserPost = (props) => {
             />
           </div>
           {posts.map((post) => {
-            return <Message key={post.tweet_id} post={post} />;
+            return <Message key={post.message_id} post={post} />;
           })}
           <div ref={observerTaget} className="h-3">
             {isFetchingNextPage ? "loading..." : ""}

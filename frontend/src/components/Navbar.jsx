@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { UserContext } from "../context/userContext";
 
 const Navbar = () => {
   const pages = ["Home", "Feed", "Popular", "Saved"];
+  const { userInfo } = useContext(UserContext);
   const nav = useNavigate();
 
   const [pageIndex, setPageIndex] = useState(0);
@@ -56,7 +58,7 @@ const Navbar = () => {
       <div
         className="cursor-pointer rounded-full size-8 bg-black"
         onClick={() => {
-          nav("/profile");
+          nav(`/profile/${userInfo.username}`);
         }}
       >
         p

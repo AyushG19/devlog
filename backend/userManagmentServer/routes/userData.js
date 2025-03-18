@@ -1,13 +1,20 @@
 const userDataRouter = require("express").Router();
-const { getUser, getPosts, createPost, getFeed, insertLike, deleteLike } = require("../controllers/userDataController");
-const validateToken = require("../middleware/validateToken")
+const { getUser, getSelf, getPosts, createPost, getFeed, insertLike, deleteLike, putFollow, deleteFollow } = require("../controllers/userDataController");
+const validateToken = require("../middleware/validateToken");
 
 userDataRouter.get("/profile", validateToken, getUser);
+userDataRouter.get("/self-profile", validateToken, getSelf);
+
 userDataRouter.get("/get-posts", validateToken, getPosts);
 userDataRouter.get("/get-feed", validateToken, getFeed);
+
 userDataRouter.post("/post", validateToken, createPost);
+
 userDataRouter.post("/like", validateToken, insertLike);
 userDataRouter.post("/unlike", validateToken, deleteLike);
+
+userDataRouter.put("/follow", validateToken, putFollow);
+userDataRouter.delete("/follow", validateToken, deleteFollow);
 
 
 module.exports = userDataRouter;

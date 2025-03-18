@@ -149,6 +149,7 @@ axiosInstance.interceptors.response.use(
         } catch (error) {
             refreshSubscribers = [];
             localStorage.removeItem("accessToken");
+            window.location.href = '/'
             console.log(error);
             return Promise.reject(error);
         } finally {
@@ -158,13 +159,13 @@ axiosInstance.interceptors.response.use(
 )
 
 const api = {
-    request(method, url, data = null, options = {}) {
+    request(method, url, data = {}, options = {}) {
         return axiosInstance({ method, url, data, ...options });
     },
     get: (url, options) => api.request('get', url, null, options),
     post: (url, data, options) => api.request('post', url, data, options),
     put: (url, data, options) => api.request('put', url, data, options),
-    delete: (url, options) => api.request('delete', url, null, options),
+    delete: (url, options) => api.request('delete', url, {}, options),
 }
 
 

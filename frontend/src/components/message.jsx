@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Heart, BookMarked, MessagesSquare } from "lucide-react";
 import api from "../api/api";
 import { UserContext } from "../context/userContext";
+import { NavLink } from "react-router";
 
 const Message = ({ post }) => {
   const [isImg, setIsImg] = useState("");
@@ -29,10 +30,10 @@ const Message = ({ post }) => {
       <div className="flex items-center justify-between w-full mb-3">
         <div className="flex items-center justify-center">
           <div className=" bg-black rounded-full size-10  mr-3"></div>
-          <div>
+          <NavLink to={`/profile/${post.username}`}>
             <p className="font-semibold text-lg">{post.name}</p>
             <p className="text-sm -mt-1 opacity-60 italic ">{`@${post.username}`}</p>
-          </div>
+          </NavLink>
         </div>
         <div className="text-[var(--primary)]">Says</div>
       </div>

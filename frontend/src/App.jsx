@@ -13,6 +13,7 @@ function App() {
       <Route path="/" element={<ActionPage />}></Route>
       <Route path="/devlog" element={<Layout />}></Route>
       <Route path="/profile" element={<ProfilePage />}></Route>
+      <Route path="/profile/:username" element={<ProfilePage />}></Route>
     </Routes>
   );
 }

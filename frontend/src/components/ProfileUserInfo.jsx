@@ -2,13 +2,33 @@ import { ChevronLeft } from "lucide-react";
 import React, { forwardRef, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../api/api";
-import { UserContext } from "../context/userContext";
 
 const ProfileUserInfo = forwardRef((props, ref) => {
   const navigate = useNavigate();
-  const { userInfo } = useContext(UserContext);
+  const { userInfo } = props;
+  console.log(userInfo);
+  const [isFollowing, setIsFollowing] = useState(
+    userInfo?.isfollowing || false
+  );
+  useEffect(() => {
+    setIsFollowing(userInfo.isfollowing);
+  }, [userInfo]);
+  console.log(
+    "in profileuserinfo : ",
+    userInfo,
+    isFollowing,
+    userInfo.isfollowing
+  );
 
-  console.log(ref);
+  const handleFollow = () => {
+    if (isFollowing) {
+      const res = api.delete(`api/user/follow?user=${userInfo.user_id}`);
+      setIsFollowing(false);
+    } else {
+      const res = api.put(`api/user/follow?user=${userInfo.user_id}`);
+      setIsFollowing(true);
+    }
+  };
   return (
     <div ref={ref} className="relative border-b">
       <div
@@ -27,23 +47,40 @@ const ProfileUserInfo = forwardRef((props, ref) => {
           md:top-56 w-24 h-24 md:w-48 md:h-48 bg-slate-500 rounded-full"
           ></div>
           <div className="flex justify-end gap-2 mb-2 md:mb-14">
-            <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold ">
-              Message
-            </button>
-            <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold ">
-              Follow
-            </button>
+            {props.isOwn ? (
+              <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold ">
+                Edit Profile
+              </button>
+            ) : (
+              <>
+                <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold ">
+                  Message
+                </button>
+                <button
+                  onClick={handleFollow}
+                  className={
+                    isFollowing
+                      ? "p-[5px_15px]  rounded-full font-semibold border border-[var(--primary)]"
+                      : `p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold `
+                  }
+                >
+                  {isFollowing ? "Following" : "Follow"}
+                </button>
+              </>
+            )}
           </div>
           <div className=" mb-4">
-            <h1 className="text-4xl font-black">{`${userInfo.username}`}</h1>
+            <h1 className="text-4xl font-black">{`${userInfo.name}`}</h1>
             <p>{`@${userInfo.username}`}</p>
           </div>
           <div className="flex gap-4">
             <p className="font-semibold text-xl">
-              300 <span className="font-normal text-lg">Posts</span>
+              {userInfo.followers_count}{" "}
+              <span className="font-normal text-lg">Followers</span>
             </p>
             <p className="font-semibold text-xl">
-              300 <span className="font-normal text-lg">Posts</span>
+              {userInfo.following_count}{" "}
+              <span className="font-normal text-lg">Following</span>
             </p>
           </div>
         </div>

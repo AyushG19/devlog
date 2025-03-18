@@ -11,3 +11,6 @@
 body {
   background-color: var(--secondary);
 }
+button:hover {
+  cursor: pointer;
+}
