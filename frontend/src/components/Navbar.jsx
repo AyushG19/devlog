@@ -1,14 +1,29 @@
-import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
+import {
+  ChevronRight,
+  ChevronLeft,
+  Search,
+  Bell,
+  Mail,
+  Bookmark,
+  Home,
+  SquarePen,
+  CircleUser,
+} from "lucide-react";
 import { UserContext } from "../context/userContext";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
-  const pages = ["Home", "Feed", "Popular", "Saved"];
-  const { userInfo } = useContext(UserContext);
+  const queryClient = useQueryClient();
+  const { screenWidth, setHalfModal } = useContext(UserContext);
+  const pages = ["home", "following", "trending", "saved"];
+  const { page } = useParams();
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [isHovering, setIsHovering] = useState(false);
   const nav = useNavigate();
 
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(pages.indexOf(page));
 
   const handleRight = () => {
     setPageIndex((prev) => (prev + 1 > 3 ? 3 : prev + 1));
@@ -18,29 +33,66 @@ const Navbar = () => {
     setPageIndex((prev) => (prev - 1 < 0 ? 0 : prev - 1));
   };
 
+  const handleNav = (index) => {
+    nav(`/${pages[index].toLowerCase()}`);
+  };
+
+  const handleHover = () => {
+    setIsHovering((prev) => !prev);
+  };
+
   return (
     <div
-      className="md:px-8 px-4 w-screen h-14 bg-[#FFD700] flex items-center justify-between"
+      className="flex z-40 md:relative md:px-8 fixed bottom-0 px-4 w-screen h-14 bg-[#FFD700] rounded-t-2xl md:rounded-none items-center justify-between"
       style={{ gridArea: "navbar" }}
     >
-      <div>Devlog</div>
+      <div className="hidden md:block">Devlog</div>
       <nav className="h-full hidden md:block">
-        <ul className="md:flex hidden h-full md:gap-8 font-medium">
-          <li className="md:flex hidden items-center justify-center h-full px-3 hover:bg-[#FFE971] cursor-pointer">
-            Home
-          </li>
-          <li className="md:flex hidden items-center justify-center h-full px-3 hover:bg-[#FFE971] cursor-pointer">
-            Feed
-          </li>
-          <li className="md:flex hidden items-center justify-center h-full px-3 hover:bg-[#FFE971] cursor-pointer">
-            Popular
-          </li>
-          <li className="md:flex hidden items-center justify-center h-full px-3 hover:bg-[#FFE971] cursor-pointer">
-            Saved
-          </li>
+        <ul className="md:flex hidden h-full font-medium">
+          {pages.map((page, index) => (
+            <li
+              key={index}
+              onMouseEnter={handleHover}
+              onMouseLeave={handleHover}
+              onClick={() => {
+                setPageIndex(index), handleNav(index);
+              }}
+              className={`md:flex hidden items-center justify-center h-full md:px-7 hover:bg-[#FFE971] cursor-pointer ${
+                pageIndex === index && !isHovering ? "bg-[#FFE971]" : ""
+              }`}
+            >
+              {page}
+            </li>
+          ))}
         </ul>
       </nav>
-      <div className="flex md:hidden">
+      <CircleUser
+        className="md:block hidden"
+        onClick={() => {
+          nav(`/profile/${userInfo.username}`);
+        }}
+        size={20}
+      />
+      <div className="relative w-full h-full flex items-center justify-between md:hidden">
+        <Home size={20} />
+        <Search size={20} />
+        <Bookmark size={20} />
+        <div className="-mt-3 bg-[var(--primary)] h-[120%] aspect-square rounded-full bottom-0 flex items-center justify-center">
+          <SquarePen size={23} />
+        </div>
+        <Bell size={20} />
+        <Mail size={20} />
+        <CircleUser
+          onClick={() =>
+            screenWidth > 786
+              ? nav(`/profile/${userInfo.username}`)
+              : setHalfModal(true)
+          }
+          size={20}
+        />
+      </div>
+
+      {/* <div className="flex md:hidden">
         <button className={pageIndex == 0 ? "hidden" : ""} onClick={handleLeft}>
           <ChevronLeft size={20} />
         </button>
@@ -53,16 +105,7 @@ const Navbar = () => {
         >
           <ChevronRight size={20} />
         </button>
-      </div>
-
-      <div
-        className="cursor-pointer rounded-full size-8 bg-black"
-        onClick={() => {
-          nav(`/profile/${userInfo.username}`);
-        }}
-      >
-        p
-      </div>
+      </div> */}
     </div>
   );
 };

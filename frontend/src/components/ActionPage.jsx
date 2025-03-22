@@ -28,7 +28,7 @@ export default function ActionPage() {
       localStorage.setItem("accessToken", res.data.accessToken);
       setUserInfo(res.data.userData);
       fetchUserInfo();
-      navigate("/devlog");
+      navigate("/home");
     } catch (error) {
       if (error.status === 400 || error.status === 403) {
         setMessage("Username or password incorrect");

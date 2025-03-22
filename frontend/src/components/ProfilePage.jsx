@@ -7,34 +7,29 @@ import { useParams } from "react-router";
 
 const ProfilePage = () => {
   const { username } = useParams();
-  const { userInfo } = useContext(UserContext);
+  const { fetchUserInfo, fetchOtherUserInfo } = useContext(UserContext);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [isOwn, setIsOwn] = useState(username === userInfo.username);
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const res = await api.get(
-        isOwn
-          ? `/api/user/self-profile`
-          : `/api/user/profile?username=${username}`
-      );
-      console.log("data: ", res);
-      setUserData(res.data.userData[0]);
+    const getUser = async () => {
+      if (!isOwn) {
+        setUserData(await fetchOtherUserInfo(username));
+      }
     };
-    if (userData && Object.keys(userData).length === 0 && !isOwn) {
-      console.log("fetching other user");
-      fetchUserInfo();
-    }
-    console.log(Object.keys(userData).length === 0, isOwn, userInfo.username);
-    console.log(userInfo, username, userInfo.username);
-  }, []);
+    getUser();
+    setIsOwn(username === userInfo.username);
+    // console.log(Object.keys(userData).length === 0, isOwn, userInfo.username);
+    // console.log(userInfo, username, userInfo.username);
+  }, [username]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log(entries);
+        // console.log(entries);
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
@@ -53,7 +48,7 @@ const ProfilePage = () => {
       observer.disconnect();
     };
   }, []);
-  console.log("ref: ", ref.current);
+  // console.log("ref: ", ref.current);
   return (
     <div className=" flex flex-col w-screen h-screen overflow-y-auto">
       <ProfileUserInfo
@@ -61,7 +56,10 @@ const ProfilePage = () => {
         userInfo={isOwn ? userInfo : userData}
         ref={ref}
       />
-      <ProfileUserPost visibility={isVisible} />
+      <ProfileUserPost
+        userInfo={isOwn ? userInfo : userData}
+        visibility={isVisible}
+      />
     </div>
   );
 };

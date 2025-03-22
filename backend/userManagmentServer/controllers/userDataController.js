@@ -14,19 +14,18 @@ const getUser = async (req, res) => {
 }
 const getSelf = async (req, res) => {
     try {
-        const username = req.user?.username;
-        const userData = await userInteraction.findSelf(username);
+        const userId = req.user?.userId;
+        console.log(userId)
+        const userData = await userInteraction.findSelf(userId);
         if (!userData) throw error;
-        return res.status(200).json({ userData: userData.rows });
+        return res.status(200).json({ userData: userData.rows[0] });
     } catch (error) {
         return res.status(500).json({ message: "internal server error" });
     }
 }
 const getPosts = async (req, res) => {
     try {
-        const username = req.query.username;
-        const userIdResponse = await user.findUserdataByUsername(username);
-        const userId = userIdResponse.rows[0].user_id;
+        const userId = req.query?.userId;
         const page = parseInt(req.query.page);
         const limit = 5;
         const nextPage = page + 1
@@ -40,17 +39,23 @@ const getPosts = async (req, res) => {
     }
 }
 const getFeed = async (req, res) => {
+    // const userId = req.user?.user_id;
+    // const userInfo = await userInteraction.getSelf(userId);
+
     try {
         const { userId } = req.user;
         const page = parseInt(req.query.page);
+        const type = req.query.type;
+        console.log(type)
         const limit = 1;
         const nextPage = page + 1
         const offset = (page - 1) * limit;
 
-        const userPosts = await userInteraction.fetchFeed(userId, limit, offset);
+        const userPosts = await userInteraction.fetchFeed(type, userId, limit, offset);
         if (!userPosts) throw error;
         return res.status(200).json({ userPosts: userPosts.rows, nextPage });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: "internal server error" });
     }
 }
@@ -109,5 +114,18 @@ const deleteFollow = async (req, res) => {
         res.status(500).json({ message: "haha internal server error" })
     }
 }
+const getToFollowSuggestion = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page);
+        const limit = 3;
+        const nextPage = page + 1;
+        const offset = (page - 1) * limit;
+        const result = await userInteraction.getToFollowSuggestion(limit, offset)
+        res.status(200).json({ suggestion: result.rows, nextPage: nextPage })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "haha internal server error" })
+    }
+}
 
-module.exports = { getUser, getSelf, getPosts, createPost, getFeed, insertLike, deleteLike, putFollow, deleteFollow };
+module.exports = { getUser, getSelf, getPosts, createPost, getFeed, insertLike, deleteLike, putFollow, deleteFollow, getToFollowSuggestion };

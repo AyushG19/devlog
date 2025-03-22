@@ -3,7 +3,13 @@
 :root {
   --primary: #ffd700;
   --primary-light: #ffe971;
-  --secondary: #f5f5f5;
+  --primary-lighter: #ffd90019;
+  --secondary: #000000;
+  --text: 238, 238, 238;
+  --like: 255, 0, 0;
+  --comment: 62, 195, 0;
+  --boost: 19, 209, 255;
+  --test: rgb(238, 238, 238);
 }
 * {
   font-family: roboto;

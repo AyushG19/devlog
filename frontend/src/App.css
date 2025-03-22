@@ -25,3 +25,23 @@
 .slide-up {
   animation: slideUp 0.2s ease-out forwards;
 }
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+@keyframes snapUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-300px);
+  }
+}
+
+.snap {
+  animation: snapUp 0.5 ease-in forwards;
+}

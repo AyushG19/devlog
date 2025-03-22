@@ -13,8 +13,8 @@ const queries = {
         WHERE p.username = $2
         `
     ,
-    findSelfByUsername:
-        "SELECT * FROM profile_info WHERE username = $1"
+    findSelfByUserId:
+        "SELECT * FROM profile_info WHERE user_id = $1"
     ,
     findPostByUserId:
         `SELECT m.message_id, m.user_id, m.username,
@@ -36,7 +36,7 @@ const queries = {
     createPost:
         "INSERT INTO message_posts (user_id,content,username,name) VALUES ($1,$2,$3,$4) RETURNING *"
     ,
-    fetchFeed:
+    fetchHomeFeed:
         `SELECT m.message_id, m.user_id, m.username,
     m.name, m.content, m.like_count, m.comment_count,
     m.created_at, m.updated_at, m.media_url,
@@ -49,6 +49,38 @@ const queries = {
         ON m.message_id = l.message_id
         AND l.user_id = $1
     ORDER BY m.created_at DESC LIMIT $2 OFFSET $3 `
+    ,
+    fetchFollowingFeed:
+        `SELECT m.message_id, m.user_id, m.username,
+    m.name, m.content, m.like_count, m.comment_count,
+    m.created_at, m.updated_at, m.media_url,
+    CASE
+        WHEN l.user_id IS NOT NULL THEN TRUE
+        ELSE FALSE 
+    END AS isLiked
+    FROM message_posts m
+    join follow_table f
+    on m.user_id = f.following_id
+    And f.follower_id = $1
+    LEFT JOIN likes_table l
+        ON m.message_id = l.message_id
+        AND l.user_id = $1
+    ORDER BY m.created_at DESC LIMIT $2 OFFSET $3 `
+    ,
+    fetchTrendingFeed:
+        `SELECT m.message_id, m.user_id, m.username,
+    m.name, m.content, m.like_count, m.comment_count,
+    m.created_at, m.updated_at, m.media_url,
+    CASE
+        WHEN l.user_id IS NOT NULL THEN TRUE
+        ELSE FALSE 
+    END AS isLiked
+    FROM message_posts m 
+    LEFT JOIN likes_table l
+        ON m.message_id = l.message_id
+        AND l.user_id = $1
+    ORDER BY (m.like_count + m.comment_count * 2) / (EXTRACT(EPOCH FROM NOW() - m.created_at) / 3600 + 1) DESC
+    LIMIT $2 OFFSET $3 `
     ,
     addLike:
         "INSERT INTO likes_table (user_id,message_id) values ($1,$2)"
@@ -67,14 +99,17 @@ const queries = {
     ,
     updateFollowingCount:
         "UPDATE profile_info SET following_count = following_count + $1 WHERE user_id = $2"
+    ,
+    getUserForSuggestion:
+        "SELECT * FROM profile_info ORDER BY updated_at DESC LIMIT $1 OFFSET $2"
 }
 const userInteraction = {
     findUser: async (userId, username) => {
         console.log("username; ", username)
         return await pool.query(queries.findUserByUsername, [userId, username]);
     },
-    findSelf: async (username) => {
-        return await pool.query(queries.findSelfByUsername, [username]);
+    findSelf: async (userId) => {
+        return await pool.query(queries.findSelfByUserId, [userId]);
     }
     ,
     findUserId: async (username) => {
@@ -87,8 +122,18 @@ const userInteraction = {
         console.log(userId, " and ", content)
         return await pool.query(queries.createPost, [userId, content, username, name]);
     },
-    fetchFeed: async (userId, limit, offset) => {
-        return await pool.query(queries.fetchFeed, [userId, limit, offset])
+    fetchFeed: async (type, userId, limit, offset) => {
+        switch (type) {
+            case "home":
+                console.log("home")
+                return await pool.query(queries.fetchHomeFeed, [userId, limit, offset])
+            case "trending":
+                return await pool.query(queries.fetchTrendingFeed, [userId, limit, offset])
+            case "following":
+                return await pool.query(queries.fetchFollowingFeed, [userId, limit, offset])
+            case "saved":
+                break;
+        }
     },
     insertLike: async (userId, messageId) => {
         return await pool.query(queries.addLike, [userId, messageId])
@@ -127,6 +172,9 @@ const userInteraction = {
         } finally {
             client.release()
         }
+    },
+    getToFollowSuggestion: async (limit, offset) => {
+        return await pool.query(queries.getUserForSuggestion, [limit, offset]);
     }
 }
 

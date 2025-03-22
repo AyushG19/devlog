@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import MainSection from "./mainSection";
 import RightSection from "./RightSection";
+import TweetModal from "./TweetModal";
+import { PenLine } from "lucide-react";
+import { UserContext } from "../context/userContext";
 
 const Layout = () => {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  useEffect(() => {
-    setScreenWidth(window.innerWidth);
-    console.log(screenWidth);
-  }, [screenWidth]);
+  const { screenWidth } = useContext(UserContext);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleClose = () => {
+    setOpenModal(false);
+  };
 
   return (
     <div
@@ -17,7 +21,18 @@ const Layout = () => {
     >
       <Navbar />
       <MainSection />
-      {screenWidth >= 786 ? <RightSection /> : null}
+      {
+        screenWidth >= 786 ? <RightSection /> : ""
+        //(
+        //   <button
+        //     className="fixed w-14 h-14 bottom-3 right-3 rounded-full bg-[var(--primary)] cursor-pointer flex justify-center items-center"
+        //     onClick={() => setOpenModal(true)}
+        //   >
+        //     <PenLine />
+        //   </button>
+        // )
+      }
+      {openModal && <TweetModal closeModal={handleClose} />}
     </div>
   );
 };

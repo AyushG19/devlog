@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import Message from "./Message";
 import DummyMessage from "./DummyMessage";
@@ -10,33 +10,32 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { UserContext } from "../context/userContext";
 
 const ProfileUserPost = (props) => {
   const observerTaget = useRef(null);
   const navigate = useNavigate();
-  const { username } = useParams();
-  const fetchPosts = async ({ pageParam = 1 }) => {
-    try {
-      const res = await api.get(
-        `/api/user/get-posts?page=${pageParam}&username=${username}`
-      );
-      console.log("res: ", res);
-      return { data: res.data, nextPage: pageParam + 1 };
-      // const data = res.userPosts.rows;
-      // console.log(...data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const queryClient = useQueryClient();
+  console.log(" posts mounted: ", props);
+  const fetchUserPosts = async (page, id) => {
+    // console.log(props.userInfo);
+    const res = await api.get(`/api/user/get-posts?page=${page}&userId=${id}`);
+    // console.log("res: ", res);
+    return { data: res.data };
+    // const data = res.userPosts.rows;
+    // console.log(...data);
   };
+
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["get-post"],
-      queryFn: fetchPosts,
+      queryKey: ["get-post", props.userInfo.user_id],
+      queryFn: ({ pageParam = 1 }) =>
+        fetchUserPosts(pageParam, props.userInfo.user_id),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => {
         if (lastPage?.data?.userPosts?.length === 0) return undefined;
-        return lastPage.nextPage;
+        return lastPage.data.nextPage;
       },
     });
 
@@ -44,7 +43,7 @@ const ProfileUserPost = (props) => {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-        console.log("fetching next page.", hasNextPage);
+        // console.log("fetching next page.", hasNextPage);
         fetchNextPage();
       }
       {
@@ -60,20 +59,20 @@ const ProfileUserPost = (props) => {
       }
     };
   }, [isFetchingNextPage, fetchNextPage, hasNextPage]);
-  console.log("posts: ", data);
+  // console.log("posts: ", data);
 
   return (
     <>
       {posts.length !== 0 ? (
         <div>
           <div
-            className={`fixed left-0 right-0 top-0 h-14 flex items-center px-4 bg-[var(--primary)] ${
-              props.visibility ? "slide-up" : "slide-down"
+            className={`fixed z-20 left-0 right-0 top-0 h-14  items-center px-4 bg-[var(--primary)]  ${
+              props.visibility ? "hidden slide-up" : "slide-down flex"
             }`}
           >
             <ChevronLeft
               onClick={() => {
-                navigate("/devlog");
+                navigate(-1);
               }}
             />
           </div>
