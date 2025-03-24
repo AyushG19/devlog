@@ -17,7 +17,7 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 const Navbar = () => {
   const queryClient = useQueryClient();
   const { screenWidth, setHalfModal } = useContext(UserContext);
-  const pages = ["home", "following", "trending", "saved"];
+  const pages = ["home", "blogs", "trending", "saved"];
   const { page } = useParams();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [isHovering, setIsHovering] = useState(false);
@@ -77,7 +77,7 @@ const Navbar = () => {
         <Home size={20} />
         <Search size={20} />
         <Bookmark size={20} />
-        <div className="-mt-3 bg-[var(--primary)] h-[120%] aspect-square rounded-full bottom-0 flex items-center justify-center">
+        <div className="-mt-3 bg-[rgb(var(--primary))] h-[120%] aspect-square rounded-full bottom-0 flex items-center justify-center">
           <SquarePen size={23} />
         </div>
         <Bell size={20} />

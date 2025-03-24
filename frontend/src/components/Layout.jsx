@@ -5,6 +5,7 @@ import RightSection from "./RightSection";
 import TweetModal from "./TweetModal";
 import { PenLine } from "lucide-react";
 import { UserContext } from "../context/userContext";
+import Blog from "./Blog.jsx";
 
 const Layout = () => {
   const { screenWidth } = useContext(UserContext);
@@ -16,11 +17,20 @@ const Layout = () => {
 
   return (
     <div
-      className="relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] "
-      style={{ gridTemplateAreas: "'navbar navbar' 'leftside rightside'" }}
+      className="relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] "
+      style={{
+        gridTemplateAreas:
+          "'navbar navbar navbar' 'leftside middleside rightside'",
+      }}
     >
       <Navbar />
       <MainSection />
+      {/* <div className="md:w-[40vw] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        {[...Array(5)].map((_, i) => (
+          <Blog key={i} />
+        ))}
+      </div> */}
+
       {
         screenWidth >= 786 ? <RightSection /> : ""
         //(

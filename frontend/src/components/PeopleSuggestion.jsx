@@ -22,10 +22,10 @@ const PeopleSuggestion = ({ users }) => {
     }));
   };
   return (
-    <div className="border border-[rgb(var(--text),0.8)] rounded-xl p-3 flex flex-col gap-2 ">
+    <div className="border border-[rgba(255,255,255,0.5)] rounded-xl p-3 flex flex-col gap-2 ">
       {users.map((user, i) => (
         <div key={i}>
-          <div className="flex items-center justify-between w-full">
+          <div className="border-b border-[rgba(255,255,255,0.5)] pb-3 flex items-center justify-between w-full">
             <div className="flex items-center justify-center">
               <div className=" bg-white rounded-full size-10  mr-3"></div>
               <NavLink to={`/profile/${user.username}`}>
@@ -39,8 +39,8 @@ const PeopleSuggestion = ({ users }) => {
               onClick={() => toggleFollowing(user.user_id)}
               className={
                 isFollowing[user.user_id]
-                  ? "p-[3px_10px]  rounded-full font-semibold border border-[var(--primary)]"
-                  : `p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold text-sm`
+                  ? "p-[3px_10px]  rounded-full font-semibold border border-[rgb(var(--primary))]"
+                  : `p-[5px_15px] bg-[rgb(var(--primary))] rounded-full font-semibold text-sm`
               }
             >
               {isFollowing[user.user_id] ? "Following" : "Follow"}

@@ -66,7 +66,7 @@ const ProfileUserPost = (props) => {
       {posts.length !== 0 ? (
         <div>
           <div
-            className={`fixed z-20 left-0 right-0 top-0 h-14  items-center px-4 bg-[var(--primary)]  ${
+            className={`fixed z-20 left-0 right-0 top-0 h-14  items-center px-4 bg-[rgb(var(--primary))]  ${
               props.visibility ? "hidden slide-up" : "slide-down flex"
             }`}
           >
@@ -76,8 +76,8 @@ const ProfileUserPost = (props) => {
               }}
             />
           </div>
-          {posts.map((post) => {
-            return <Message key={post.message_id} post={post} />;
+          {posts.map((post, i) => {
+            return <Message key={post.message_id} id={i} post={post} />;
           })}
           <div ref={observerTaget} className="h-3">
             {isFetchingNextPage ? "loading..." : ""}
@@ -92,7 +92,7 @@ const ProfileUserPost = (props) => {
       )}
       {/* <div>
         <div
-          className={`fixed left-0 right-0 top-0 h-14 flex items-center px-4 bg-[var(--primary)] ${
+          className={`fixed left-0 right-0 top-0 h-14 flex items-center px-4 bg-[rgb(var(--primary))] ${
             props.visibility ? "slide-up" : "slide-down"
           }`}
         >

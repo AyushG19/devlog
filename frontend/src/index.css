@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #ffd700;
-  --primary-light: #ffe971;
-  --primary-lighter: #ffd90019;
-  --secondary: #000000;
+  --primary: 255, 215, 0;
+  --primary-light: 255, 233, 113;
+  --primary-lighter: rgba(255, 217, 0, 0.098);
+  --secondary: rgb(5, 5, 5);
+  --secondary-2: rgb(10, 10, 10);
   --text: 238, 238, 238;
   --like: 255, 0, 0;
   --comment: 62, 195, 0;
   --boost: 19, 209, 255;
-  --test: rgb(238, 238, 238);
+  --test: calc(var(--like) + var(--comment));
+  --test-2: rgb;
 }
 * {
   font-family: roboto;

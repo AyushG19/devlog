@@ -11,7 +11,7 @@ const MainSection = () => {
     useContext(UserContext);
   return (
     <div
-      className="md:w-[70vw] w-screen h-full md:px-2 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden "
+      className="md:w-[70vw] w-screen h-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden "
       style={{ gridArea: "leftside" }}
     >
       <FeedSection />

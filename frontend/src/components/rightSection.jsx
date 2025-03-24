@@ -23,14 +23,14 @@ const rightSection = () => {
   const users = data?.pages.flatMap((user) => user.data.suggestion) || [];
   return (
     <div
-      className="p-2 flex flex-col gap-2 max-h-24"
+      className=" p-2 flex flex-col gap-2 max-h-24"
       style={{
         gridArea: "rightside",
       }}
     >
       {data && <PeopleSuggestion users={users} />}
       <button
-        className="rounded-full bg-[var(--primary-light)] p-[5px_15px] hover:bg-[var(--primary)] cursor-pointer "
+        className="rounded-full bg-[var(rgb(var(rgb(var(--primary))-light)))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
         onClick={() => setOpenModal(true)}
       >
         Write something

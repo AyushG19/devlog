@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { UserContext } from "../context/userContext";
 
 const HalfProfile = (props) => {
-  const { userInfo } = props;
+  const { userInfo, key } = props;
   const { setHalfModal } = useContext(UserContext);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState(window.innerHeight / 2);
@@ -39,7 +39,9 @@ const HalfProfile = (props) => {
 
   return (
     <div
-      className={`absolute h-screen right-0 left-0 border-b transition-translate duration-300 ${
+      className={`${
+        key % 2 === 0 ? "bg-amber-50" : ""
+      } absolute h-screen right-0 left-0 border-b transition-translate duration-300 ${
         snap ? "-translate-y-1/2" : ""
       }`}
       style={{ top: `${position}px` }}

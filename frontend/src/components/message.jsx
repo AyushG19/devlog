@@ -10,8 +10,9 @@ import {
 import api from "../api/api";
 import { UserContext } from "../context/userContext";
 import { NavLink } from "react-router";
+import CommentSection from "./CommentSection";
 
-const Message = ({ post }) => {
+const Message = ({ post, id }) => {
   console.log("message: ", post);
   const ref = useRef(null);
   const { screenWidth } = useContext(UserContext);
@@ -20,6 +21,7 @@ const Message = ({ post }) => {
   const [commentCount, setCommentCount] = useState(post.comment_count);
   const [isLiked, setIsLiked] = useState(post.isliked);
   const [disliked, setDisliked] = useState(false);
+  const [commentModal, setCommentModal] = useState(false);
 
   const handleLike = () => {
     const endpoint = isLiked ? "/api/user/unlike" : "/api/user/like";
@@ -56,26 +58,33 @@ const Message = ({ post }) => {
   };
 
   const handleMouseLeave = () => {
-    ref.current.style.borderColor = "rgb(var(--text),0.8)";
+    ref.current.style.borderColor = "rgba(255,255,255,0.5)";
   };
 
+  const handleCommentClick = () => {
+    setCommentModal((prev) => !prev);
+  };
   return (
-    <div className="flex flex-col w-full bg-[var(--secondary)] py-2 px-4">
-      <div className="flex relative w-full">
+    <div
+      className={`${
+        id % 2 === 0 ? "bg-[var(--secondary-2)] " : "bg-[var(--secondary)]"
+      } flex flex-col py-2 px-4 md:border-r md:border-[rgba(255,255,255,0.1)] shadow-[inset_0px_5px_5px_rgba(0,0,0,0.5)]`}
+    >
+      <div className="flex relative bg-inherit">
         {/* Container for the user info */}
-        <div className="flex-shrink-0 bg-white rounded-full w-10 h-10 mr-2"></div>
-        <div className="w-full">
+        <div className="flex-shrink-0 bg-white rounded-full w-7 h-7 mr-2"></div>
+        <div className="w-full bg-inherit">
           <NavLink
-            className="flex items-baseline w-full"
+            className="flex items-center w-full"
             to={`/profile/${post.username}`}
           >
             <p className="text-[rgb(var(--text))] font-semibold text-lg mr-1 capitalize">
               {post.name}
             </p>
-            <p className="text-sm opacity-60 text-[rgb(var(--text))] italic">
+            <p className="text-xs opacity-60 text-[rgb(var(--text))] italic">
               {`@${post.username}`}
             </p>
-            <div className="ml-auto text-[var(--primary)]">Says</div>
+            <div className="ml-auto text-[rgb(var(--primary))]">Says</div>
           </NavLink>
           <div className="-mt-0.5 mb-2 text-white text-[11px] opacity-60">
             posted on 10 nov, 2023
@@ -83,7 +92,7 @@ const Message = ({ post }) => {
           {/* Container for the user text */}
           <div
             ref={ref}
-            className="relative -ml-7 mb-2 pl-3 pb-7 w-full border-l border-b rounded-bl-2xl border-[rgb(var(--text),0.8)] transition-all"
+            className="relative -ml-6 mb-2 pl-5 pb-5 w-full border-l border-b rounded-bl-lg border-[rgba(255,255,255,0.5)] transition-all "
           >
             <p className="text-sm text-[rgb(var(--text))] opacity-95">
               {post.content}
@@ -91,16 +100,28 @@ const Message = ({ post }) => {
             {isImg && <img src={isImg} alt="image" className="w-full" />}
           </div>
           {/* Container for interactions */}
-          <div className="flex justify-between -mt-6 pl-2 relative">
-            <div className="flex gap-8">
+          <div className="flex z-10 -ml-3 x-30 justify-between -mt-6 relative">
+            <div className="flex gap-8 ">
               <div
                 id="comment"
+                onClick={handleCommentClick}
                 onMouseEnter={(e) => handleMouseEnter(e.currentTarget)}
                 onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
-                className="pr-2 flex items-center justify-center text-[rgb(var(--text))] hover:text-[rgb(var(--comment))] cursor-pointer transition-all text-xs duration-200 group bg-[var(--secondary)]"
+                className={`${
+                  id % 2 === 0
+                    ? "bg-[var(--secondary-2)] "
+                    : "bg-[var(--secondary)]"
+                } pr-2 flex items-center justify-center  hover:text-[rgb(var(--comment))] cursor-pointer transition-all text-xs duration-200 group ${
+                  commentModal
+                    ? "text-[rgb(var(--comment))]"
+                    : "text-[rgb(var(--text))]"
+                } active:scale-105`}
               >
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--comment),0.1)]">
-                  <MessagesSquare size={13} />
+                  <MessagesSquare
+                    fill={`${commentModal ? "rgb(var(--comment))" : "none"}`}
+                    size={13}
+                  />
                 </div>
                 {commentCount}
               </div>
@@ -116,7 +137,11 @@ const Message = ({ post }) => {
                   isLiked
                     ? "text-[rgb(var(--like))]"
                     : "text-[rgb(var(--text))]"
-                } flex items-center justify-center hover:text-[rgb(var(--like))] duration-200 group bg-[var(--secondary)]`}
+                } ${
+                  id % 2 === 0
+                    ? "bg-[var(--secondary-2)] "
+                    : "bg-[var(--secondary)]"
+                } active:scale-105 flex items-center justify-center hover:text-[rgb(var(--like))] duration-200 group bg-[var(--secondary)]`}
               >
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--like),0.1)]">
                   {disliked ? (
@@ -137,7 +162,11 @@ const Message = ({ post }) => {
                 id="boost"
                 onMouseEnter={(e) => handleMouseEnter(e.currentTarget)}
                 onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
-                className="pr-2 flex items-center justify-center text-[rgb(var(--text))] hover:text-[rgb(var(--boost))] cursor-pointer transition-all text-xs duration-200 group bg-[var(--secondary)]"
+                className={`${
+                  id % 2 === 0
+                    ? "bg-[var(--secondary-2)] "
+                    : "bg-[var(--secondary)]"
+                } active:scale-105 pr-2 flex items-center justify-center text-[rgb(var(--text))] hover:text-[rgb(var(--boost))] cursor-pointer transition-all text-xs duration-200 group bg-[var(--secondary)]`}
               >
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--boost),0.1)]">
                   <Rocket size={13} />
@@ -147,6 +176,12 @@ const Message = ({ post }) => {
             </div>
             <div className="text-sm">more</div>
           </div>
+          {commentModal && (
+            <CommentSection
+              callbacks={{ handleMouseEnter, handleMouseLeave }}
+              id={id}
+            />
+          )}
         </div>
       </div>
     </div>

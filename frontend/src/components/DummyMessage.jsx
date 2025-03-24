@@ -22,7 +22,7 @@ const Message = ({ post }) => {
             <p className="text-sm -mt-1 text-gray-900 italic ">@username</p>
           </div>
         </div>
-        <div className="text-[var(--primary)]">Says</div>
+        <div className="text-[rgb(var(--primary))]">Says</div>
       </div>
       {/* Container for the user text */}
       <div className="pl-5 mb-2">
@@ -44,15 +44,15 @@ const Message = ({ post }) => {
       {/* Container for interactions */}
       <div className="flex justify-between pl-5 py-2">
         <div className="flex gap-8">
-          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(--primary-light)] rounded-full cursor-pointer active:bg-[var(--primary)] md:hover:bg-[var(--primary)] transition-all duration-200 ">
+          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(rgb(var(rgb(var(--primary))-light)))] rounded-full cursor-pointer active:bg-[rgb(var(--primary))] md:hover:bg-[rgb(var(--primary))] transition-all duration-200 ">
             <Heart size={13} />
             <p className="text-xs">300</p>
           </div>
-          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(--primary-light)] rounded-full cursor-pointer hover:bg-[var(--primary)] transition-all duration-200 ">
+          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(rgb(var(rgb(var(--primary))-light)))] rounded-full cursor-pointer hover:bg-[rgb(var(--primary))] transition-all duration-200 ">
             <MessagesSquare size={13} />
             <p className="text-xs">300</p>
           </div>
-          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(--primary-light)] rounded-full cursor-pointer hover:bg-[var(--primary)] transition-all duration-200 ">
+          <div className="flex items-center justify-center gap-1 p-[5px_15px] bg-[var(rgb(var(rgb(var(--primary))-light)))] rounded-full cursor-pointer hover:bg-[rgb(var(--primary))] transition-all duration-200 ">
             <BookMarked size={13} />
             <p className="text-xs">300</p>
           </div>

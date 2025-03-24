@@ -54,7 +54,7 @@ const FeedSection = () => {
     <div className="w-full">
       {posts.length === 0
         ? [...Array(5)].map((_, i) => <MessagePlaceholder key={i} />)
-        : posts.map((post, i) => <Message key={i} post={post} />)}
+        : posts.map((post, i) => <Message key={i} id={i} post={post} />)}
 
       {/* Loader Placeholder Instead of Removing Content */}
 

@@ -32,9 +32,12 @@ const ProfileUserInfo = forwardRef((props, ref) => {
     }
   };
   return (
-    <div ref={ref} className="relative border-b border-[var(--primary)] mb-2">
+    <div
+      ref={ref}
+      className="relative border-b border-[rgb(var(--primary))] mb-2"
+    >
       <div
-        className={`flex items-center justify-center w-8 h-8 rounded-full bg-[var(--primary-light)] absolute m-4 cursor-pointer hover:bg-[var(--primary)]`}
+        className={`flex items-center justify-center w-8 h-8 rounded-full bg-[var(rgb(var(rgb(var(--primary))-light)))] absolute m-4 cursor-pointer hover:bg-[rgb(var(--primary))]`}
         onClick={() => {
           navigate(-1);
         }}
@@ -50,20 +53,20 @@ const ProfileUserInfo = forwardRef((props, ref) => {
           ></div>
           <div className="flex justify-end gap-2 mb-2 md:mb-14">
             {props.isOwn ? (
-              <button className="m-3 rounded-full font-semibold text-[rgb(var(--text))]">
+              <button className="m-3 rounded-full font-semibold text-[rgb(var(--text))] md:border md:rounded-3xl md:border-[rgb(var(--primary))] md:p-[5px_15px]">
                 {screenWidth < 786 ? <SquarePen size={20} /> : "Edit Profile"}
               </button>
             ) : (
               <>
-                <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold ">
+                <button className="p-[5px_15px] bg-[rgb(var(--primary))] rounded-full font-semibold ">
                   Message
                 </button>
                 <button
                   onClick={handleFollow}
                   className={
                     isFollowing
-                      ? "p-[5px_15px]  rounded-full font-semibold border border-[var(--primary)]"
-                      : `p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold `
+                      ? "p-[5px_15px]  rounded-full font-semibold border border-[rgb(var(--primary))]"
+                      : `p-[5px_15px] bg-[rgb(var(--primary))] rounded-full font-semibold `
                   }
                 >
                   {isFollowing ? "Following" : "Follow"}
