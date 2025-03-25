@@ -39,15 +39,13 @@ const HalfProfile = (props) => {
 
   return (
     <div
-      className={`${
-        key % 2 === 0 ? "bg-amber-50" : ""
-      } absolute h-screen right-0 left-0 border-b transition-translate duration-300 ${
+      className={`absolute h-screen right-0 left-0 border-b transition-translate duration-300 ${
         snap ? "-translate-y-1/2" : ""
       }`}
       style={{ top: `${position}px` }}
     >
       <div
-        className="flex items-center justify-center w-16 h-1 rounded-2xl bg-[rgb(var(--text))] absolute top-1 left-1/2 -translate-x-1/2 cursor-pointer hover:bg-[var(--primary)]"
+        className="flex items-center justify-center w-16 h-1 rounded-2xl bg-[rgb(var(--text))] absolute top-1 left-1/2 -translate-x-1/2 cursor-pointer hover:bg-[rgb(var(--primary))]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -60,7 +58,7 @@ const HalfProfile = (props) => {
               md:top-56 w-24 h-24 md:w-48 md:h-48 bg-slate-500 rounded-full"
           ></div>
           <div className="flex justify-end gap-2 mb-2 md:mb-14">
-            <button className="p-[5px_15px] bg-[var(--primary)] rounded-full font-semibold">
+            <button className="p-[5px_15px] bg-[rgb(var(--primary))] rounded-full font-semibold">
               Edit Profile
             </button>
           </div>

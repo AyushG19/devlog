@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 import api from "../api/api";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-const CommentSection = ({ postId, callbacks, id }) => {
+const CommentSection = ({ messageId, callbacks, id }) => {
   const { handleMouseEnter, handleMouseLeave } = callbacks;
   const [commentText, setCommentText] = useState("");
   const [sortBy, setSortBy] = useState("Most recent");
@@ -62,11 +63,23 @@ const CommentSection = ({ postId, callbacks, id }) => {
     },
   ];
 
+  const handleFetchComment = () => {
+    const comments = api.get("/api/post/comment");
+  };
+  const handleAddComment = () => {};
+
+  // const {data:commentPages,isFetching}= useInfiniteQuery({
+  //   queryKey:["comments",messageId] ,
+  //   queryFn:
+  // })
   const handleSubmit = () => {
     if (!commentText.trim()) return;
 
     // API call would go here
-    console.log("Submitting comment:", commentText);
+    const res = api.post("api/post/comment", {
+      content: commentText,
+      postId: messageId,
+    });
 
     // Reset the input
     setCommentText("");
@@ -125,7 +138,7 @@ const CommentSection = ({ postId, callbacks, id }) => {
        overflow-hidden`}
       >
         {/* Comment input section */}
-        <div className="bg-inherit border-b border-r shadow-lg shadow-black rounded-lg mb-4 w-full p-2 ">
+        <div className="bg-inherit border-b border-r shadow-lg shadow-black rounded-lg mb-4 w-full p-3 ">
           <div className="mb-3 w-full">
             <input
               type="text"
@@ -137,7 +150,7 @@ const CommentSection = ({ postId, callbacks, id }) => {
           </div>
 
           <div className="flex items-center justify-between w-full">
-            <div className="px-4 flex gap-2 md:space-x-4 text-[rgb(var(--text))] opacity-80">
+            <div className="px-2 flex gap-2 md:space-x-4 text-[rgb(var(--text))] opacity-80">
               <button className="font-bold">B</button>
               <button className="italic">I</button>
               <button className="underline">U</button>
@@ -195,7 +208,7 @@ const CommentSection = ({ postId, callbacks, id }) => {
               </button>
             </div>
             <button
-              className="bg-[rgb(var(--primary))] text-[var(--secondary)] capitalize font-bold py-2 px-4 rounded-full text-sm"
+              className="bg-[rgb(var(--primary))] text-[var(--secondary)] capitalize font-bold p-[5px_15px] rounded-full text-sm"
               onClick={handleSubmit}
             >
               {screenWidth < 786 ? <Upload size={15} /> : "post"}

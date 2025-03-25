@@ -180,6 +180,7 @@ const Message = ({ post, id }) => {
             <CommentSection
               callbacks={{ handleMouseEnter, handleMouseLeave }}
               id={id}
+              messageId={post.message_id}
             />
           )}
         </div>
