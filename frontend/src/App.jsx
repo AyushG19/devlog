@@ -1,9 +1,7 @@
-import Navbar from "./components/Navbar.jsx";
-import RightSection from "./components/RightSection.jsx";
-import Layout from "./components/Layout.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
 import ActionPage from "./components/ActionPage.jsx";
 import { Routes, Route, useLocation } from "react-router";
+import Layout from "./components/layout.jsx";
 
 import "./App.css";
 import { useEffect } from "react";

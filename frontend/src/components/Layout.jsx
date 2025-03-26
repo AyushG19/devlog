@@ -35,7 +35,7 @@ const Layout = () => {
         screenWidth >= 786 ? <RightSection /> : ""
         //(
         //   <button
-        //     className="fixed w-14 h-14 bottom-3 right-3 rounded-full bg-[var(--primary)] cursor-pointer flex justify-center items-center"
+        //     className="fixed w-14 h-14 bottom-3 right-3 rounded-full bg-[rgb(var(--primary))] cursor-pointer flex justify-center items-center"
         //     onClick={() => setOpenModal(true)}
         //   >
         //     <PenLine />
