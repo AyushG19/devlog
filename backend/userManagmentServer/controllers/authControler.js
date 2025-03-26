@@ -4,7 +4,7 @@ const { config } = require("../config/config")
 
 const refreshExpiredToken = async (req, res) => {
     try {
-        const refreshToken = req.cookies.refreshToken;  //called short-circuit evaluation
+        const refreshToken = req.signedCookies?.refreshToken;  //called short-circuit evaluation
         if (!refreshToken) return res.status(403).send("refresh token expired");
 
         console.log("check 1 in auth controller")
@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
         const { accessToken, refreshToken } = AuthService.generateTokens("all", { username, userId });
 
         return res
-            .cookie("refreshToken", refreshToken, config.cookie)
+            .cookie("refreshToken", refreshToken, { ...config.cookie, signed: true })
             .status(200)
             .json({
                 userData: profileInfo.rows[0],

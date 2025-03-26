@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "../utils/environment";
 import { optional } from "joi";
 let isRefreshing = false;
 let refreshSubscribers = [];
@@ -98,7 +99,7 @@ const subscribersCallback = (newToken) => {
 // }
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: getApiUrl(),
     headers: { "Content-Type": "application/json" },
     withCredentials: true,
 })
