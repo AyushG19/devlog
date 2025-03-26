@@ -45,29 +45,51 @@ const createUser = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-    console.log("Inside login")
     try {
         const { username, password } = req.body;
-        console.log(username)
+        console.log("Attempting login for:", username);
+
         const isUser = await user.findUserdataByUsername(username);
-        console.log(isUser);
-        if (isUser.rows.length == 0) return res.status(400).json({ message: "user dosen't exist" });
 
-        if (await AuthService.checkPass(password, isUser.rows[0].password)) {
-            console.log("inside if")
-            const userId = isUser.rows[0].user_id;
-            const profileInfo = await user.findProfileInfoByUserId(userId)
-            const { accessToken, refreshToken } = AuthService.generateTokens("all", { username, userId });
-            console.log("accesstoken", accessToken)
-
-            return res.cookie("refreshToken", refreshToken, config.cookie).json({ userData: profileInfo.rows[0], accessToken });
-        } else {
-            return res.status(400).json({ message: "invalid credentials" });
+        // Add proper null checks
+        if (!isUser || !isUser.rows || isUser.rows.length === 0) {
+            console.log("User not found");
+            return res.status(404).json({
+                message: "User not found",
+                success: false
+            });
         }
+
+        const passwordMatch = await AuthService.checkPass(password, isUser.rows[0].password);
+        if (!passwordMatch) {
+            console.log("Invalid password");
+            return res.status(401).json({
+                message: "Invalid credentials",
+                success: false
+            });
+        }
+
+        const userId = isUser.rows[0].user_id;
+        const profileInfo = await user.findProfileInfoByUserId(userId);
+        const { accessToken, refreshToken } = AuthService.generateTokens("all", { username, userId });
+
+        return res
+            .cookie("refreshToken", refreshToken, config.cookie)
+            .status(200)
+            .json({
+                userData: profileInfo.rows[0],
+                accessToken,
+                success: true
+            });
+
     } catch (error) {
-        return res.status(500).json({ message: "internal server error" });
+        console.error("Login error:", error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        });
     }
-}
+};
 
 module.exports = {
     refreshExpiredToken,

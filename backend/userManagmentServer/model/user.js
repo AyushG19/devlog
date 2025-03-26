@@ -11,7 +11,9 @@ const queries = {
 const user = {
     findUserdataByUsername: async (username) => {
         console.log("user ke andar: ", username)
-        return await pool.query(queries.searchUserByUsername, [username])
+        const data = await pool.query(queries.searchUserByUsername, [username])
+        console.log(data);
+        return data;
     },
     createUser: async (username, hashedPass) => {
         console.log(typeof username, typeof hashedPass)
