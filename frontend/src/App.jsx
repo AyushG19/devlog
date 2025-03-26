@@ -1,7 +1,7 @@
 import ProfilePage from "./components/ProfilePage.jsx";
 import ActionPage from "./components/ActionPage.jsx";
 import { Routes, Route, useLocation } from "react-router";
-import Layout from "./components/layout.jsx";
+import Layout from "./components/Layout.jsx";
 
 import "./App.css";
 import { useEffect } from "react";
