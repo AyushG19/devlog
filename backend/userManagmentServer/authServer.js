@@ -13,6 +13,7 @@ const app = express();
 console.log(process.env.DBUSER)
 
 app.use(cors(config.cors));
+app.options('*', cors(config.cors)); // Enable pre-flight for all routes
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(express.json());
