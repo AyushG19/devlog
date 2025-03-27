@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import MainSection from "./mainSection";
 import RightSection from "./RightSection";
 import TweetModal from "./TweetModal";
 import { PenLine } from "lucide-react";
 import { UserContext } from "../context/userContext";
-import Blog from "./Blog.jsx";
+import MainSection from "./MainSection.jsx";
 
 const Layout = () => {
   const { screenWidth } = useContext(UserContext);

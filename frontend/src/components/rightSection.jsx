@@ -4,7 +4,7 @@ import PeopleSuggestion from "./PeopleSuggestion";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserContext } from "../context/userContext";
 
-const rightSection = () => {
+const RightSection = () => {
   const [openModal, setOpenModal] = useState(false);
   const { fetchUserSuggestion } = useContext(UserContext);
   const handleClose = () => {
@@ -30,7 +30,7 @@ const rightSection = () => {
     >
       {data && <PeopleSuggestion users={users} />}
       <button
-        className="rounded-full bg-[var(rgb(var(rgb(var(--primary))-light)))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
+        className="rounded-full bg-[rgb(var(--primary-light))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
         onClick={() => setOpenModal(true)}
       >
         Write something
@@ -40,4 +40,4 @@ const rightSection = () => {
   );
 };
 
-export default rightSection;
+export default RightSection;
