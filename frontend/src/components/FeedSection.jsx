@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import Message from "./Message";
-import MessagePlaceholder from "./messagePlaceholder";
+import MessagePlaceholder from "./MessagePlaceholder";
 import api from "../api/api";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserContext } from "../context/userContext";
