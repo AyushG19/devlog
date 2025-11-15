@@ -10,7 +10,7 @@ const TweetModal = ({ closeModal }) => {
   const handleSendTweet = async () => {
     console.log(content);
     try {
-      const res = await api.post("http://localhost:4000/api/user/post", {
+      const res = await api.post("api/user/post", {
         content,
         name: userInfo.name,
       });
