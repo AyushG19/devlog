@@ -1,8 +1,6 @@
 # DevLog
 
-## Demo
-
-<video src="assets/demo.mp4" controls width="100%" height="auto"></video>
+![Demo Video](assets/demo.mp4)
 
 A personal development logging tool to track progress, ideas, and milestones in your projects. Keep your dev journey organized and shareable!
 
