@@ -104,23 +104,18 @@ const queries = {
         "SELECT * FROM profile_info ORDER BY updated_at DESC LIMIT $1 OFFSET $2"
     ,
     getComment:
-        `SELECT * 
-        CASE 
-            if c.upvotedBy is not null return true 
-            else false
-        end as isUpvoted
-        CASE 
-            when c.downvotedBy is not null then true 
-            else false
-        end as isDownvoted
-        FROM comments c 
-        left join profile_info on
-            c.author_id = p.user_id
-            and p.user_id = $1
-        WHERE post_id = $2 ORDER BY c.created_at DECS LIMIT $3 OFFSET $4`
+        `SELECT 
+    ct.*, p.name, p.username
+FROM comments_table ct
+LEFT JOIN profile_info p 
+    ON ct.author_id = p.user_id 
+WHERE ct.post_id = $1
+ORDER BY ct.created_at DESC 
+LIMIT $2 OFFSET $3
+`
     ,
     addComment:
-        `insert into comments_table (content,author_id,post_id) values ($1,$2,$3)`
+        `insert into comments_table (content,author_id,post_id) values ($1,$2,$3) returning *`
 }
 const userInteraction = {
     findUser: async (userId, username) => {
@@ -196,7 +191,7 @@ const userInteraction = {
         return await pool.query(queries.getUserForSuggestion, [limit, offset]);
     },
     getComment: async (postId, limit, offset, userId) => {
-        return await pool.query(queries.getComment, [postId, limit, offset, userId]);
+        return await pool.query(queries.getComment, [postId, limit, offset]);
     },
     postComment: async (content, userId, postId) => {
         return await pool.query(queries.addComment, [content, userId, postId])

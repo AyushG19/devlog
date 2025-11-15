@@ -36,7 +36,7 @@ const FeedSection = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { rootMargin: "0px", threshold: 0.1 }
     );
 
     if (observerTaget.current) {
@@ -59,7 +59,7 @@ const FeedSection = () => {
       {/* Loader Placeholder Instead of Removing Content */}
 
       {/* Intersection Observer Target */}
-      <div ref={observerTaget} className="h-3">
+      <div ref={observerTaget} className="h-28 md:h-10">
         {isFetchingNextPage && (
           <div className="w-full h-4 bg-gray-300 rounded-md mb-1"></div>
         )}

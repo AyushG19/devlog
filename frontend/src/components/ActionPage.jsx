@@ -44,11 +44,7 @@ export default function ActionPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await api.post("/api/auth/signup", { username, password });
 
       console.log(res.status);
       if (res.status === 400 || res.status === 401) {
@@ -71,13 +67,16 @@ export default function ActionPage() {
           {isLogin ? "Login Account" : "Sign Up Account"}
         </h2>
         <input
+          id="usernmame"
           type="text"
           placeholder={isLogin ? "Username" : "Choose Username"}
           className="w-full p-2 mb-3 border rounded bg-gray-700 border-gray-600"
           onChange={(e) => setUsername(e.target.value)}
         />
+
         <div className="relative w-full mb-3">
           <input
+            id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
             className="w-full p-2 border rounded bg-gray-700 border-gray-600"
@@ -123,6 +122,12 @@ export default function ActionPage() {
             {isLogin ? "Sign Up" : "Login"}
           </span>
         </p>
+        {isLogin ? (
+          <div className="mt-3">
+            <p className="text-xs capitalize ">quick emial : johndoe</p>
+            <p className="text-xs capitalize ">quick pass : Jhon@123</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

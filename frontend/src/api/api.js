@@ -119,8 +119,9 @@ axiosInstance.interceptors.response.use(
     response => response,
     async error => {
         const originalReq = error.config;
-        if (error.response.status != 401 || originalReq._retry || !error.response) {
+        if (error.response?.status != 401 || originalReq._retry || !error.response) {
             // window.location.href = '/'
+            console.log(error)
             return Promise.reject(error);
         }
 

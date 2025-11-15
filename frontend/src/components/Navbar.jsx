@@ -43,8 +43,8 @@ const Navbar = () => {
 
   return (
     <div
-      className="flex z-40 md:relative md:px-8 fixed bottom-0 px-4 w-screen h-14 bg-[#FFD700] rounded-t-2xl md:rounded-none items-center justify-between"
-      style={{ gridArea: "navbar" }}
+      className="flex z-40 md:relative md:px-8 px-4 w-screen h-14 bg-[#FFD700] rounded-t-2xl md:rounded-none items-center justify-stretch md:justify-between"
+      style={{ gridArea: screenWidth < 786 ? "bottom" : "navbar" }}
     >
       <div className="hidden md:block">Devlog</div>
       <nav className="h-full hidden md:block">
@@ -73,16 +73,17 @@ const Navbar = () => {
         }}
         size={20}
       />
-      <div className="relative w-full h-full flex items-center justify-between md:hidden">
-        <Home size={20} />
-        <Search size={20} />
-        <Bookmark size={20} />
+      <div className="relative w-full h-full flex items-center justify-stretch md:hidden">
+        <Home className="flex-1" size={20} />
+        <Search className="flex-1" size={20} />
+        <Bookmark className="flex-1" size={20} />
         <div className="-mt-3 bg-[rgb(var(--primary))] h-[120%] aspect-square rounded-full bottom-0 flex items-center justify-center">
-          <SquarePen size={23} />
+          <SquarePen className="flex-1" size={23} />
         </div>
-        <Bell size={20} />
-        <Mail size={20} />
+        <Bell className="flex-1" size={20} />
+        <Mail className="flex-1" size={20} />
         <CircleUser
+          className="flex-1"
           onClick={() =>
             screenWidth > 786
               ? nav(`/profile/${userInfo.username}`)

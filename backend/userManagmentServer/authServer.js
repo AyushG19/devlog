@@ -8,12 +8,11 @@ const userDataRouter = require("./routes/userData.js");
 const userPostRouter = require("./routes/userPostRouter.js");
 const { config } = require('./config/config.js');
 
-
 const app = express();
-console.log(process.env.DBUSER)
+console.log(process.env.DBUSER, config.cors)
 
 app.use(cors(config.cors));
-app.options('*', cors(config.cors)); // Enable pre-flight for all routes
+// app.options('*', cors(config.cors)); // Enable pre-flight for all routes
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(express.json());

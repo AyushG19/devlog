@@ -39,7 +39,7 @@ const HalfProfile = (props) => {
 
   return (
     <div
-      className={`absolute h-screen right-0 left-0 border-b transition-translate duration-300 ${
+      className={`absolute z-2 h-screen right-0 left-0 border-b transition-translate duration-300 ${
         snap ? "-translate-y-1/2" : ""
       }`}
       style={{ top: `${position}px` }}
@@ -68,7 +68,7 @@ const HalfProfile = (props) => {
             </h1>
             <p className="text-[rgb(var(--text))]">@{userInfo.username}</p>
           </div>
-          <div className="text-center flex gap-4">
+          <div className="text-center items-center justify-center md:justify-normal md:items-start w-full flex gap-4">
             <p className="font-semibold text-xl text-[rgb(var(--text))]">
               {userInfo.followers_count}{" "}
               <span className="block font-normal text-lg">Followers</span>

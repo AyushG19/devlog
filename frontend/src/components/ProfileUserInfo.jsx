@@ -3,15 +3,17 @@ import React, { forwardRef, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../api/api";
 import { UserContext } from "../context/userContext";
+import ProfileEditModal from "./ProfileEditModal";
 
 const ProfileUserInfo = forwardRef((props, ref) => {
   const navigate = useNavigate();
   const { userInfo } = props;
-  const { screenWidth } = useContext(UserContext);
+  const { screenWidth, setProfileEditModal } = useContext(UserContext);
   console.log(userInfo);
   const [isFollowing, setIsFollowing] = useState(
     userInfo?.isfollowing || false
   );
+
   useEffect(() => {
     setIsFollowing(userInfo.isfollowing);
   }, [userInfo]);
@@ -53,7 +55,10 @@ const ProfileUserInfo = forwardRef((props, ref) => {
           ></div>
           <div className="flex justify-end gap-2 mb-2 md:mb-14">
             {props.isOwn ? (
-              <button className="m-3 rounded-full font-semibold text-[rgb(var(--text))] md:border md:rounded-3xl md:border-[rgb(var(--primary))] md:p-[5px_15px]">
+              <button
+                onClick={() => setProfileEditModal(true)}
+                className="m-3 rounded-full font-semibold text-[rgb(var(--text))] md:border md:rounded-3xl md:border-[rgb(var(--primary))] md:p-[5px_15px]"
+              >
                 {screenWidth < 786 ? <SquarePen size={20} /> : "Edit Profile"}
               </button>
             ) : (

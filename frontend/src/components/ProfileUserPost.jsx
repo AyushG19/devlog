@@ -66,7 +66,7 @@ const ProfileUserPost = (props) => {
       {posts.length !== 0 ? (
         <div>
           <div
-            className={`fixed z-20 left-0 right-0 top-0 h-14  items-center px-4 bg-[rgb(var(--primary))]  ${
+            className={`fixed z-2 left-0 right-0 top-0 h-14  items-center px-4 bg-[rgb(var(--primary))]  ${
               props.visibility ? "hidden slide-up" : "slide-down flex"
             }`}
           >

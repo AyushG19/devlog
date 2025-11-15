@@ -9,6 +9,8 @@ const UserContextProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [halfModal, setHalfModal] = useState(false);
+  const [profileEditModal, setProfileEditModal] = useState(false);
+
   useEffect(() => {
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
@@ -70,6 +72,8 @@ const UserContextProvider = ({ children }) => {
   const values = {
     userInfo,
     halfModal,
+    profileEditModal,
+    setProfileEditModal,
     setHalfModal,
     setUserInfo,
     fetchUserInfo,

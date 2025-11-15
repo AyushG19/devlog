@@ -12,6 +12,8 @@
   --boost: 19, 209, 255;
   --test: calc(var(--like) + var(--comment));
   --test-2: rgb;
+  --before-border-color: rgba(var(--text), 0.3);
+  --after-border-color: rgba(var(--text), 0.3);
 }
 * {
   font-family: roboto;
@@ -21,4 +23,11 @@ body {
 }
 button:hover {
   cursor: pointer;
+}
+
+.parent::before {
+  border-color: var(--before-border-color);
+}
+.parent::after {
+  border-color: var(--after-border-color);
 }

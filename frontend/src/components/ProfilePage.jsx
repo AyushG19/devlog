@@ -4,10 +4,12 @@ import ProfileUserPost from "./ProfileUserPost.jsx";
 import api from "../api/api.js";
 import { UserContext } from "../context/userContext.jsx";
 import { useParams } from "react-router";
+import ProfileEditModal from "./ProfileEditModal.jsx";
 
 const ProfilePage = () => {
   const { username } = useParams();
-  const { fetchUserInfo, fetchOtherUserInfo } = useContext(UserContext);
+  const { fetchUserInfo, fetchOtherUserInfo, profileEditModal } =
+    useContext(UserContext);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [isOwn, setIsOwn] = useState(username === userInfo.username);
   const ref = useRef(null);
@@ -50,7 +52,7 @@ const ProfilePage = () => {
   }, []);
   // console.log("ref: ", ref.current);
   return (
-    <div className=" flex flex-col w-screen h-screen overflow-y-auto">
+    <div className="relative flex flex-col w-screen h-screen overflow-y-auto">
       <ProfileUserInfo
         isOwn={isOwn}
         userInfo={isOwn ? userInfo : userData}
@@ -60,6 +62,7 @@ const ProfilePage = () => {
         userInfo={isOwn ? userInfo : userData}
         visibility={isVisible}
       />
+      {profileEditModal && <ProfileEditModal />}
     </div>
   );
 };

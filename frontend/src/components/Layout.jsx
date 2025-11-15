@@ -16,10 +16,10 @@ const Layout = () => {
 
   return (
     <div
-      className="relative w-screen h-screen bg-[--secondary] grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] "
+      className="relative w-screen h-[100dvh] bg-[--secondary] grid grid-cols-[auto_auto_1fr] grid-rows-[auto_auto_1fr] "
       style={{
         gridTemplateAreas:
-          "'navbar navbar navbar' 'leftside middleside rightside'",
+          "'navbar navbar navbar' 'leftside middleside rightside' 'bottom bottom bottom'",
       }}
     >
       <Navbar />

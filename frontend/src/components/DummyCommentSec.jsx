@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { UserContext } from "../context/userContext";
 import {
   ThumbsUp,
@@ -11,15 +11,21 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 import api from "../api/api";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 const CommentSection = ({ messageId, callbacks, id }) => {
   const { handleMouseEnter, handleMouseLeave } = callbacks;
   const [commentText, setCommentText] = useState("");
   const [sortBy, setSortBy] = useState("Most recent");
   const { screenWidth } = useContext(UserContext);
-  const [commentRefs, setCommentRefs] = useState({});
-  const ref = useRef(null);
+  const [hoverIndex, setHoverIndex] = useState(-1);
+  const [actionColor, setActionColor] = useState("");
+  const queryClient = useQueryClient();
 
   const comments = [
     {
@@ -63,53 +69,134 @@ const CommentSection = ({ messageId, callbacks, id }) => {
     },
   ];
 
-  const handleFetchComment = () => {
-    const comments = api.get("/api/post/comment");
+  const handleFetchComment = async (page) => {
+    const comments = await api.get(
+      `/api/post/comment?page=${page}&post=${messageId}`
+    );
+    console.log("comments: ", comments.data);
+    return comments.data;
   };
-  const handleAddComment = () => {};
 
-  // const {data:commentPages,isFetching}= useInfiniteQuery({
-  //   queryKey:["comments",messageId] ,
-  //   queryFn:
-  // })
-  const handleSubmit = () => {
+  const { data, isFetching, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["comment", messageId],
+    queryFn: ({ pageParam = 1 }) => handleFetchComment(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (prevPage) => {
+      if (!prevPage) return undefined;
+      return prevPage?.nextPage;
+    },
+  });
+  console.log("commentPages:", data); // Add this line
+  const handleSubmit = async () => {
     if (!commentText.trim()) return;
 
     // API call would go here
-    const res = api.post("api/post/comment", {
+    const res = await api.post("api/post/comment", {
       content: commentText,
       postId: messageId,
     });
 
     // Reset the input
     setCommentText("");
+    const { name, username } = JSON.parse(localStorage.getItem("userInfo"));
+    console.log("res from post comment : ", {
+      ...res.data.comment,
+      name: name,
+      username: username,
+    });
+
+    return { ...res.data.comment, name: name, username: username };
   };
 
-  const handleMouseEnter2 = (target, commentId) => {
-    if (!commentRefs[commentId]) return;
+  const {
+    data: postedComment,
+    status,
+    mutate: postComment,
+  } = useMutation({
+    mutationFn: handleSubmit,
+    onSuccess: (newComment) => {
+      // Update the cache optimistically
+      queryClient.setQueryData(["comment", messageId], (oldData) => {
+        // If no existing data, create new structure with the comment
+        if (!oldData) {
+          return {
+            pages: [
+              {
+                comments: [newComment],
+                nextPage: undefined,
+              },
+            ],
+            pageParams: [1],
+          };
+        }
 
-    const action = target.id;
-    switch (action) {
-      case "like":
-        commentRefs[commentId].style.borderColor = "rgba(var(--like),0.5)";
-        ref.current.style.borderColor = "rgba(var(--like),0.5)";
-        handleMouseEnter(target);
-        break;
-      case "comment":
-        commentRefs[commentId].style.borderColor = "rgba(var(--comment),0.5)";
-        ref.current.style.borderColor = "rgba(var(--comment),0.5)";
-        handleMouseEnter(target);
-        break;
-      default:
-    }
+        // Clone the existing pages array
+        const updatedPages = [...oldData.pages];
+
+        // Update the first page by prepending the new comment
+        updatedPages[0] = {
+          ...updatedPages[0],
+          comments: [newComment, ...updatedPages[0].comments],
+        };
+
+        // Return the updated structure
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      });
+
+      // Optional: Trigger background refresh to ensure server consistency
+      queryClient.invalidateQueries(["comment", messageId]);
+    },
+  });
+
+  const handleMouseEnter2 = (target, idx, color) => {
+    setHoverIndex(idx);
+    setActionColor(color);
+    handleMouseEnter(target);
+
+    // const action = target.id;
+    // console.log(commentRefs[commentId]);
+    // switch (action) {
+    //   case "like":
+    //     commentRefs[commentId].classList.add(
+    //       "after:border-[rgba(var(--like),0.5)]"
+    //     );
+    //     commentRefs[commentId].classList.remove("before:border-l");
+
+    //     // ref.current.style.borderColor = "rgba(var(--like),0.5)";
+    //     handleMouseEnter(target);
+    //     break;
+    //   case "comment":
+    //     commentRefs[commentId].classList.add(
+    //       "after:border-[rgba(var(--comment),0.5)]"
+    //     );
+    //     commentRefs[commentId].classList.remove("before:border-l");
+
+    //     commentRefs[commentId].style.borderColor = "rgba(var(--comment),0.5)";
+    //     ref.current.style.borderColor = "rgba(var(--comment),0.5)";
+    //     break;
+    //   default:
+    //   }
   };
 
-  const handleMouseLeave2 = (commentId) => {
-    if (commentRefs[commentId]) {
-      commentRefs[commentId].style.borderColor = "rgba(255,255,255,0.5)";
-    }
-    ref.current.style.borderColor = "rgba(255,255,255,0.5)";
+  const handleMouseLeave2 = () => {
+    setHoverIndex(-1);
+    setActionColor("");
     handleMouseLeave();
+
+    // if (commentRefs[commentId]) {
+    //   commentRefs[commentId].classList.remove(
+    //     "after:border-[rgba(var(--like),0.5)]"
+    //   );
+    //   commentRefs[commentId].classList.add("before:border-l");
+
+    //   commentRefs[commentId].classList.remove(
+    //     "after:border-[rgba(var(--comment),0.5)]"
+    //   );
+    //   commentRefs[commentId].classList.add("before:border-l");
+    // }
   };
 
   const handleLike = (commentId) => {
@@ -117,28 +204,33 @@ const CommentSection = ({ messageId, callbacks, id }) => {
     console.log("Liked comment:", commentId);
   };
 
-  const setCommentRef = (element, commentId) => {
-    if (element && !commentRefs[commentId]) {
-      setCommentRefs((prev) => ({
-        ...prev,
-        [commentId]: element,
-      }));
-    }
-  };
+  // const setCommentRef = (element, commentId) => {
+  //   if (element && !commentRefs[commentId]) {
+  //     setCommentRefs((prev) => ({
+  //       ...prev,
+  //       [commentId]: element,
+  //     }));
+  //   }
+  // };
   // after:content-[""] after:h-full after:border-l after:border-white after:bg-white after:absolute after:top-0
   //after:content-[''] after:text-black after:-ml-3 after:top-0 after:left-0 after:absolute after:h-[1px] after:border-l after:border-white after:bg-black after:w-[120%] after:shadow-[0px_10px_10px_black]
+  const allComments = data?.pages.flatMap((page) => page?.comments) || [];
+  console.log(status);
 
   return (
     <>
       <div
-        ref={ref}
         className={`${
           id % 2 === 0 ? "bg-[var(--secondary-2)]" : "bg-[var(--secondary)]"
         }  ml-1.5`}
         style={{ gridArea: "2 / 2 / 3 / 3" }}
       >
         {/* Comment input section */}
-        <div className="bg-inherit border-b border-r shadow-lg shadow-black rounded-lg mb-4 w-full p-3 ">
+        <div
+          className={`relative bg-inherit border-b border-[rgb(255,255,255,0.3)] w-full p-3 
+        after:content-[''] after:absolute after:top-0 after:border-l after:border-[rgba(255,255,255,0.3)] after:left-0 after:h-full
+        ${hoverIndex === -1 ? "" : `after:border-[${actionColor}]`}`}
+        >
           <div className="mb-3 w-full">
             <input
               type="text"
@@ -154,7 +246,7 @@ const CommentSection = ({ messageId, callbacks, id }) => {
               <button className="font-bold">B</button>
               <button className="italic">I</button>
               <button className="underline">U</button>
-              <span className="text-[rgba(255,255,255,0.3)]">|</span>
+              <span className="text-[rgba(255,255,255,0.5)]">|</span>
               <button>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -209,7 +301,7 @@ const CommentSection = ({ messageId, callbacks, id }) => {
             </div>
             <button
               className="bg-[rgb(var(--primary))] text-[var(--secondary)] capitalize font-bold p-[5px_15px] rounded-full text-sm"
-              onClick={handleSubmit}
+              onClick={() => postComment()}
             >
               {screenWidth < 786 ? <Upload size={15} /> : "post"}
             </button>
@@ -245,11 +337,31 @@ const CommentSection = ({ messageId, callbacks, id }) => {
       </div> */}
 
         {/* Comments list */}
-        <div className="w-full relative pl-4">
-          {comments.map((comment, index) => (
+        <div className="w-full mb-2 bg-inherit relative after:absolute after:h-3 after:w-1 after:border-l after:border-l-[rgba(var(--text),0.3)] ">
+          {allComments?.map((comment, index) => (
             <div
+              // ref={(el) => setCommentRef(el, index)}
               key={index}
-              className="flex relative py-2 w-full after:content-[''] after:absolute after:top-0 after:border-l after:border-b after:rounded-bl-3xl md:after:rounded-bl-xl after:border-[rgba(255,255,255,0.5)] after:-ml-5.5 after:w-full after:h-full"
+              className={`pl-4 flex relative py-6 w-full parent 
+                after:absolute after:top-0 after:border-b after:border-l after:rounded-bl-3xl md:after:rounded-bl-xl  after:left-0 after:w-full after:h-full after:mix-blend-difference
+              before:absolute before:top-0 before:left-0 before:h-full
+                ${
+                  hoverIndex >= index
+                    ? hoverIndex === index
+                      ? ``
+                      : `before:border-l after:border-l-0`
+                    : "before:border-l"
+                }`}
+              style={{
+                "--after-border-color":
+                  hoverIndex >= index
+                    ? hoverIndex === index
+                      ? actionColor
+                      : ""
+                    : "rgba(var(--text),0.3)",
+                "--before-border-color":
+                  hoverIndex > index ? actionColor : "rgba(var(--text),0.3)",
+              }}
             >
               <div className="flex-shrink-0 bg-white rounded-full w-7 h-7 mr-2"></div>
               <div className="flex-grow items-center justify-center w-full ">
@@ -265,33 +377,39 @@ const CommentSection = ({ messageId, callbacks, id }) => {
                       {`@${comment.username}`}
                     </p>
                   </div>
-                  {comment.verified && (
+                  {/* {comment.verified && (
                     <span className="ml-1 bg-[rgb(var(--primary))] rounded-full p-0.5">
                       <Check size={10} className="text-[rgb(var(--text))]" />
                     </span>
-                  )}
+                  )} */}
                   <div className="ml-auto text-[rgb(var(--text))] opacity-60 text-xs">
-                    {comment.timeAgo}
+                    {comment.created_at}
                   </div>
                 </NavLink>
 
                 <div
-                  ref={(el) => setCommentRef(el, index)}
-                  className="relative  mt-1 left-0 mb-2 -ml-8 pb-5 w-full   transition-all rounded-bl-2xl "
+                  className={`relative  mt-1 left-0 -ml-8 w-full   transition-all rounded-bl-2xl`}
                 >
                   <p className="text-sm text-[rgb(var(--text))] opacity-95 w-[105%] pt-2">
                     {comment.content}
                   </p>
                 </div>
 
-                <div className="flex -mt-6 pl-2 relative w-full z-10">
+                {/**container for interactions */}
+                <div className="flex absolute bottom-0 translate-y-1/2 w-full z-10">
                   <div className="flex justify-between md:gap-8">
                     <div
                       id="comment"
-                      onMouseEnter={(e) =>
-                        handleMouseEnter2(e.currentTarget, index)
-                      }
-                      onMouseLeave={() => handleMouseLeave2(index)}
+                      onMouseEnter={(e) => {
+                        handleMouseEnter2(
+                          e.currentTarget,
+                          index,
+                          "rgba(var(--comment),0.5)"
+                        );
+                      }}
+                      onMouseLeave={() => {
+                        handleMouseLeave2();
+                      }}
                       className={`flex items-center justify-center text-[rgb(var(--text))] hover:text-[rgb(var(--comment))] cursor-pointer transition-all text-xs duration-200 group ${
                         id % 2 === 0
                           ? "bg-[var(--secondary-2)]"
@@ -307,10 +425,16 @@ const CommentSection = ({ messageId, callbacks, id }) => {
                     <div
                       id="like"
                       onClick={() => handleLike(index)}
-                      onMouseEnter={(e) =>
-                        handleMouseEnter2(e.currentTarget, index)
-                      }
-                      onMouseLeave={() => handleMouseLeave2(index)}
+                      onMouseEnter={(e) => {
+                        handleMouseEnter2(
+                          e.currentTarget,
+                          index,
+                          "rgba(var(--like),0.5)"
+                        );
+                      }}
+                      onMouseLeave={() => {
+                        handleMouseLeave2();
+                      }}
                       className={`${
                         comment.isliked
                           ? "text-[rgb(var(--like))]"
@@ -319,7 +443,7 @@ const CommentSection = ({ messageId, callbacks, id }) => {
                         id % 2 === 0
                           ? "bg-[var(--secondary-2)]"
                           : "bg-[var(--secondary)]"
-                      }`}
+                      } `}
                     >
                       <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--like),0.1)]">
                         <ThumbsUp
@@ -357,11 +481,14 @@ const CommentSection = ({ messageId, callbacks, id }) => {
               </div>
             </div>
           ))}
+          <div
+            onClick={() => fetchNextPage()}
+            className="active:bg-[rgb(var(--primary))] cursor-pointer active:scale-105 z-5 absolute -translate-x-1/2 rounded-full w-4 h-4 p-0.5 flex items-center justify-center border border-[rgba(var(--primary))] text-[rgba(var(--primary))] bg-inherit active:text-black "
+          >
+            <Plus strokeWidth={3} size={10} />
+          </div>
         </div>
       </div>
-      {/* <div className="bg-[rgb(var(--primary))] rounded-full relative -translate-1/2 left-0 bottom-0 aspect-square w-fit p-1 flex items-center justify-center">
-        <Plus strokeWidth={3} size={10} />
-      </div> */}
     </>
   );
 };

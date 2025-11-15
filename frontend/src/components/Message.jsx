@@ -11,9 +11,12 @@ import api from "../api/api";
 import { UserContext } from "../context/userContext";
 import { NavLink } from "react-router";
 import CommentSection from "./CommentSection";
+import DummyCommentSec from "./DummyCommentSec";
 
 const Message = ({ post, id }) => {
   console.log("message: ", post);
+  console.log(import.meta.env.VITE_API_URL);
+
   const ref = useRef(null);
   const { screenWidth } = useContext(UserContext);
   const [isImg, setIsImg] = useState("");
@@ -45,20 +48,22 @@ const Message = ({ post, id }) => {
     console.log(rang);
     switch (rang) {
       case "like":
-        ref.current.style.borderColor = "rgba(var(--like),0.5)";
+        ref.current.classList.add("after:border-[rgba(var(--like),0.5)]");
         break;
       case "comment":
-        ref.current.style.borderColor = "rgba(var(--comment),0.5)";
+        ref.current.classList.add("after:border-[rgba(var(--comment),0.5)]");
         break;
       case "boost":
-        ref.current.style.borderColor = "rgba(var(--boost),0.5)";
+        ref.current.classList.add("after:border-[rgba(var(--boost),0.5)]");
         break;
       default:
     }
   };
 
   const handleMouseLeave = () => {
-    ref.current.style.borderColor = "rgba(255,255,255,0.5)";
+    ref.current.classList.remove("after:border-[rgba(var(--like),0.5)]");
+    ref.current.classList.remove("after:border-[rgba(var(--comment),0.5)]");
+    ref.current.classList.remove("after:border-[rgba(var(--boost),0.5)]");
   };
 
   const handleCommentClick = () => {
@@ -66,14 +71,21 @@ const Message = ({ post, id }) => {
   };
   return (
     <div
+      name={"message container"}
       className={`${
         id % 2 === 0 ? "bg-[var(--secondary-2)] " : "bg-[var(--secondary)]"
-      } flex flex-col py-2 px-4 md:border-r md:border-[rgba(255,255,255,0.1)] shadow-[inset_0px_5px_5px_rgba(0,0,0,0.5)]`}
+      } flex flex-col pt-3 pb-5 px-2 md:border-r md:border-[rgba(255,255,255,0.1)] shadow-[inset_0px_5px_5px_rgba(0,0,0,0.5)]`}
     >
-      <div className="flex relative bg-inherit">
+      <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] relative bg-inherit">
         {/* Container for the user info */}
-        <div className="flex-shrink-0 bg-white rounded-full w-7 h-7 mr-2"></div>
-        <div className="w-full bg-inherit">
+        <div
+          className="z-2 flex-shrink-0 bg-white rounded-full w-7 h-7 mr-2"
+          style={{ gridArea: "1 / 1 / 3 / 2" }}
+        ></div>
+        <div
+          className="relative w-full bg-inherit"
+          style={{ gridArea: "1 / 2 / 2 / 3" }}
+        >
           <NavLink
             className="flex items-center w-full"
             to={`/profile/${post.username}`}
@@ -92,26 +104,29 @@ const Message = ({ post, id }) => {
           {/* Container for the user text */}
           <div
             ref={ref}
-            className="relative -ml-6 mb-2 pl-5 pb-5 w-full border-l border-b rounded-bl-lg border-[rgba(255,255,255,0.5)] transition-all "
+            className=" mb-2 pb-4 w-full after:content-[''] after:absolute after:top-0 after:border-l after:border-b after:rounded-bl-3xl md:after:rounded-bl-xl after:border-[rgba(255,255,255,0.3)] after:-ml-5.5 after:w-full after:h-full transition-all "
           >
             <p className="text-sm text-[rgb(var(--text))] opacity-95">
               {post.content}
             </p>
             {isImg && <img src={isImg} alt="image" className="w-full" />}
           </div>
+
           {/* Container for interactions */}
-          <div className="flex z-10 -ml-3 x-30 justify-between -mt-6 relative">
+          <div className="flex absolute bottom-0 z-1 -ml-2 translate-y-1/2 justify-between ">
             <div className="flex gap-8 ">
               <div
                 id="comment"
                 onClick={handleCommentClick}
-                onMouseEnter={(e) => handleMouseEnter(e.currentTarget)}
+                onMouseEnter={(e) => {
+                  screenWidth < 786 ? "" : handleMouseEnter(e.currentTarget);
+                }}
                 onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
                 className={`${
                   id % 2 === 0
                     ? "bg-[var(--secondary-2)] "
                     : "bg-[var(--secondary)]"
-                } pr-2 flex items-center justify-center  hover:text-[rgb(var(--comment))] cursor-pointer transition-all text-xs duration-200 group ${
+                } pr-2 flex items-center justify-center  hover:text-[rgb(var(--comment))] cursor-pointer transition-all text-xs duration-200 group text-[rgb(--var(--text))] ${
                   commentModal
                     ? "text-[rgb(var(--comment))]"
                     : "text-[rgb(var(--text))]"
@@ -120,7 +135,7 @@ const Message = ({ post, id }) => {
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--comment),0.1)]">
                   <MessagesSquare
                     fill={`${commentModal ? "rgb(var(--comment))" : "none"}`}
-                    size={13}
+                    size={15}
                   />
                 </div>
                 {commentCount}
@@ -145,10 +160,10 @@ const Message = ({ post, id }) => {
               >
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--like),0.1)]">
                   {disliked ? (
-                    <HeartCrack size={13} />
+                    <HeartCrack size={15} />
                   ) : (
                     <Heart
-                      size={13}
+                      size={15}
                       fill={isLiked ? "rgb(var(--like))" : "none"}
                     />
                   )}
@@ -160,7 +175,9 @@ const Message = ({ post, id }) => {
 
               <div
                 id="boost"
-                onMouseEnter={(e) => handleMouseEnter(e.currentTarget)}
+                onMouseEnter={(e) => {
+                  screenWidth < 786 ? "" : handleMouseEnter(e.currentTarget);
+                }}
                 onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
                 className={`${
                   id % 2 === 0
@@ -169,21 +186,21 @@ const Message = ({ post, id }) => {
                 } active:scale-105 pr-2 flex items-center justify-center text-[rgb(var(--text))] hover:text-[rgb(var(--boost))] cursor-pointer transition-all text-xs duration-200 group bg-[var(--secondary)]`}
               >
                 <div className="flex items-center justify-center w-8 h-8 p-2 rounded-full group-hover:bg-[rgba(var(--boost),0.1)]">
-                  <Rocket size={13} />
+                  <Rocket size={15} />
                 </div>
                 {commentCount}
               </div>
             </div>
             <div className="text-sm">more</div>
           </div>
-          {commentModal && (
-            <CommentSection
-              callbacks={{ handleMouseEnter, handleMouseLeave }}
-              id={id}
-              messageId={post.message_id}
-            />
-          )}
         </div>
+        {commentModal && (
+          <DummyCommentSec
+            callbacks={{ handleMouseEnter, handleMouseLeave }}
+            id={id}
+            messageId={post.message_id}
+          />
+        )}
       </div>
     </div>
   );

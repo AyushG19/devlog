@@ -16,5 +16,10 @@ export default defineConfig(({ mode }) => ({
         }
       }
     }
+  },
+  server: { // Add this server configuration
+    host: '0.0.0.0', // Listen on all network interfaces
+    port: 5173, // Or your preferred port
+    // open: true, // Optionally open the browser on start
   }
 }))
