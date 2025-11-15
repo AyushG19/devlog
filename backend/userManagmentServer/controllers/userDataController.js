@@ -67,7 +67,7 @@ const createPost = async (req, res) => {
         const addedPost = await userInteraction.createPost(userId, content, username, name);
         res.status(200).json({ message: "posted", addedPost })
     } catch (error) {
-        res.status(500).json({ error: "internal server error" })
+        res.status(500).json({ error: error })
     }
 }
 const insertLike = async (req, res) => {

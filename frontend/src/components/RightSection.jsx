@@ -30,7 +30,7 @@ const RightSection = () => {
     >
       {data && <PeopleSuggestion users={users} />}
       <button
-        className="rounded-full bg-[rgb(var(--primary-light))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
+        className="rounded-full bg-[rgb(var(--primary))] p-[5px_15px] hover:bg-[rgb(var(--primary-light))] cursor-pointer "
         onClick={() => setOpenModal(true)}
       >
         Write something

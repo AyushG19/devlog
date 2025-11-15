@@ -39,7 +39,7 @@ const PeopleSuggestion = ({ users }) => {
               onClick={() => toggleFollowing(user.user_id)}
               className={
                 isFollowing[user.user_id]
-                  ? "p-[3px_10px]  rounded-full font-semibold border border-[rgb(var(--primary))]"
+                  ? "p-[3px_10px] text-white rounded-full font-semibold border border-[rgb(var(--primary))]"
                   : `p-[5px_15px] bg-[rgb(var(--primary))] rounded-full font-semibold text-sm`
               }
             >

@@ -20,14 +20,14 @@ const TweetModal = ({ closeModal }) => {
     }
   };
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--secondary)] p-6 border size-96 ">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[rgb(var(--primary))] p-6 border border-[rgb(var(--primary))] size-96 rounded-2xl z-100">
       <X onClick={closeModal} className="float-right mb-4 -m-2 " />
       <textarea
         onChange={(e) => setContent(e.target.value)}
-        className="border w-full h-3/4 outline-none p-3"
+        className="border w-full h-3/4 outline-none p-3 text-white rounded-2xl bg-[var(--secondary)]"
       ></textarea>
       <button
-        className="rounded-full bg-[var(rgb(var(rgb(var(--primary))-light)))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
+        className="border rounded-full bg-[rgb(var(--primary-light))] p-[5px_15px] hover:bg-[rgb(var(--primary))] cursor-pointer "
         onClick={() => handleSendTweet()}
       >
         send it

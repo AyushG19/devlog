@@ -123,9 +123,11 @@ export default function ActionPage() {
           </span>
         </p>
         {isLogin ? (
-          <div className="mt-3">
-            <p className="text-xs capitalize ">quick emial : johndoe</p>
-            <p className="text-xs capitalize ">quick pass : Jhon@123</p>
+          <div className="mt-3 text-blue-500 capitalize text-sm flex items-center justify-center flex-col">
+            {" "}
+            quick login
+            <p className="text-xs capitalize text-white">johndoe</p>
+            <p className="text-xs capitalize text-white">Jhon@123</p>
           </div>
         ) : null}
       </div>
